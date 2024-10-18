@@ -18,6 +18,7 @@ const GameSection: React.FC<GameSectionProps> = ({ photos, setPhotos }) => {
   const [wrongs, setWrongs] = useState(0);
   const [images, setImages] = useState<ImageQuestion[]>([]);
   const [isFadingIn, setIsFadingIn] = useState(false);
+  const [winState, setWinState] = useState(false)
 
   useEffect(() => {
     if (photos && photos.length > 0) {
@@ -27,8 +28,20 @@ const GameSection: React.FC<GameSectionProps> = ({ photos, setPhotos }) => {
 
     setTimeout(() => {
       setIsFadingIn(true); // Start fading in the game section
-    }, 100);
+      setWinState(false);
+    }, 500);
   }, [photos]);
+
+  useEffect(()=>{
+    if(corrects >= 8){
+      setIsFadingIn(false);
+
+      setTimeout(() => {
+        setWinState(true);
+        setIsFadingIn(true); // Start fading in the game section
+      }, 500);
+    }
+  },[corrects])
 
   const updateImageOption = (imageIndex: number, optionIndex: number) => {
     const updatedImages = images.map((image, imgIdx) => {
@@ -65,12 +78,13 @@ const GameSection: React.FC<GameSectionProps> = ({ photos, setPhotos }) => {
     const newPhotos = await fetchPhotos();
     setPhotos(newPhotos);
     setLoading(false);
+    setIsFadingIn(false);
   };
 
   return <div className={`flex flex-col w-full justify-start flex-grow transition-opacity duration-500 ${
     isFadingIn ? "opacity-100" : "opacity-0"}`}>
         <TimeLine corrects={corrects} setCurrentIndex={setCurrentIndex} currentIndex={currentIndex} />
-      {corrects >= 8 ? (
+      {winState ? (
       <div className="flex mt-20 justify-center">
         <CongratulationSection playAgain={resetGame} corrects={corrects} wrongs={wrongs} />
       </div>
@@ -81,6 +95,7 @@ const GameSection: React.FC<GameSectionProps> = ({ photos, setPhotos }) => {
           currentIndex={currentIndex}
           increaseCorrects={increaseCorrects}
           increaseWrongs={increaseWrongs}
+          corrects={corrects}
         />
     )}
   </div>

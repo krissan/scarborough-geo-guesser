@@ -30,7 +30,7 @@ export default function Home() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center text-black min-h-screen w-screen">
+    <div className="flex flex-col items-center justify-center text-black min-h-screen w-screen overflow-y-auto">
       <main className="flex flex-col justify-center mx-auto flex-grow">
         {!isGameStarted ? (
           <div
@@ -45,14 +45,14 @@ export default function Home() {
         )}
       </main>
 
-      <footer className="flex flex-row justify-around w-full h-auto pb-2">
+      <div className="flex flex-row justify-around w-full h-auto py-2">
         <LinkButton link="https://krissan-portfolio-site-krissans-projects.vercel.app/">
           A project by Krissan Veerasingam
         </LinkButton>
         <LinkButton link="https://www.scarboroughspots.com/">
           Inspired by Scarborough Spots
         </LinkButton>
-      </footer>
+      </div>
     </div>
   );
 }

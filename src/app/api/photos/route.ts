@@ -3,9 +3,10 @@ import { groq } from "next-sanity";
 import { NextResponse } from "next/server";
 import { Photo } from "../../../../typing";
 import { sanityClient } from "@/sanity";
+export const dynamic = 'force-dynamic';
 
 const allPhotoIdsQuery = groq`*[_type == "photo"]{_id}`;
-const photosByIdsQuery = (ids: string[]) => groq`*[_id in $ids]`;
+const photosByIdsQuery = (ids: string[]) => groq`*[_id in $ids]`; // eslint-disable-line @typescript-eslint/no-unused-vars
 
 type Data = {
   photos: Photo[];
@@ -14,7 +15,7 @@ type Data = {
 export async function GET() {
   try {
     // Step 1: Fetch all photo IDs
-    const allPhotoIds: { _id: string }[] = await sanityClient.fetch(allPhotoIdsQuery);
+    const allPhotoIds: { _id: string }[] = await sanityClient.fetch(allPhotoIdsQuery, undefined,  { cache: 'no-store' });
 
     // Step 2: Select 10 random IDs
     const randomIds = getRandomElements(allPhotoIds.map(photo => photo._id), 10);

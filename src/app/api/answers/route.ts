@@ -13,7 +13,7 @@ type Data = {
 
 export async function GET() {
   try {
-    const data: Data = await sanityClient.fetch(query,undefined, { cache: 'no-store' });
+    const data: Data = await sanityClient.fetch(query);
     return NextResponse.json(data);
   } catch (error) {
     console.error("An error occurred:", error);
