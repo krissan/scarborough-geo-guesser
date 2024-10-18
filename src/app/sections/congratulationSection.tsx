@@ -15,7 +15,7 @@ const CongratulationSection: React.FC<CongratulationSectionProps> = ({ corrects,
         <div className="mb-4">
           <Title>CONGRATULATIONS</Title>
           <Title>SCARBOROUGH SPOTTER</Title>
-          <div>{corrects === 8 ? "Perfect Score: " : "Score: "} {corrects - wrongs}</div>
+          <div>{wrongs === 0 ? "Perfect Score: " : "Score: "} {corrects - wrongs}</div>
         </div>
 
         <StartButton onClick={playAgain}>Play Again</StartButton>

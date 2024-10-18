@@ -26,7 +26,6 @@ export const fetchPhotos = async () => {
   
       const responseText = await response.text();
       const photos:Photo[] = JSON.parse(responseText);
-      console.log(responseText)
 
       const answers:string[] = await fetchAnswers();
 
@@ -87,7 +86,7 @@ const getSanityImageUrl = (imageRef: string) => {
   const imageUrl = imageRef.slice(6,-4);
   const imageType = imageRef.slice(-3);
 
-  return `https://cdn.sanity.io/images/${process.env.NEXT_PUBLIC_PROJECT_ID}/${process.env.NEXT_PUBLIC_DATASET}/${imageUrl}.${imageType}`;
+  return `https://cdn.sanity.io/images/${process.env.NEXT_PUBLIC_SANITY_PROJECT_ID}/${process.env.NEXT_PUBLIC_SANITY_DATASET}/${imageUrl}.${imageType}`;
 }
 
 export const fetchAnswers = async () => {

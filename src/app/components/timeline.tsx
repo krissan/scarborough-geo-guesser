@@ -26,7 +26,7 @@ const TimeLine: React.FC<TimeLineProps> = ({ corrects, setCurrentIndex, currentI
   const visibleStops = timeline.slice(0, corrects + 1);
 
   return (
-    <div className="flex items-center justify-center w-full flex-wrap pt-8 px-10">
+    <div className="flex items-center justify-center w-full flex-wrap py-8 px-10">
       {visibleStops.map((stop, index) => (
         <div
           key={index}
