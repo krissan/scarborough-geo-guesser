@@ -20,7 +20,7 @@ const Answers: React.FC<AnswersProps> = ({
   increaseWrongs,
   imageIndex,
 }) => {
-  const handleClick = (index: number) => {
+  const handleAnswerSelection = (index: number) => {
     if (!options[index].selected) {
       if (answer === index) {
         increaseCorrects(imageIndex, index);
@@ -31,12 +31,13 @@ const Answers: React.FC<AnswersProps> = ({
   };
 
   return (
+    <div className="h-24">
       <div className="flex flex-col py-6 items-center mx-auto md:grid md:grid-cols-2 md:gap-4 w-8/12 md:justify-items-center">
         {options.map((item, index) => (
           <button
             key={item.option+imageIndex}
             disabled={item.selected || options[answer].selected}
-            onClick={() => handleClick(index)}
+            onClick={() => handleAnswerSelection(index)}
             className={`flex flex-row items-center justify-start p-2 mt-4 rounded-lg border-black border-2 hover:border-4 w-48 min-h-10 text-left
               shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]
               hover:${item.selected || options[answer].selected ? "":"shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]"}
@@ -49,6 +50,7 @@ const Answers: React.FC<AnswersProps> = ({
           </button>
         ))}
       </div>
+    </div>
   );
 };
 

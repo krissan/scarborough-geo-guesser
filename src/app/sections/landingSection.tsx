@@ -6,6 +6,7 @@ interface LandingSectionProps {
   startGame: () => void; // Function to start the game
 }
 
+// Landing Screen for website
 const LandingSection: React.FC<LandingSectionProps> = ({ startGame }) => {
   return (
     <div className="flex flex-col items-center sm:flex-row sm:justify-around px-10">

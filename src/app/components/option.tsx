@@ -7,6 +7,7 @@ interface OptionProps {
   onClick: ()=>void;
 }
 
+// Component for option in multiple choice question
 const Answers: React.FC<OptionProps> = ({children, onClick}) => {
 
   return (

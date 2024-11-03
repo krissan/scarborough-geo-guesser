@@ -24,3 +24,12 @@ body {
     text-wrap: balance;
   }
 }
+
+.blur {
+  filter: blur(10px);
+}
+ 
+.remove-blur {
+  filter: blur(0px);
+  transition: filter 5s ease-in;
+}
