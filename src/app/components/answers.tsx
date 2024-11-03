@@ -31,6 +31,7 @@ const Answers: React.FC<AnswersProps> = ({
   };
 
   return (
+    <div className="h-24">
       <div className="flex flex-col py-6 items-center mx-auto md:grid md:grid-cols-2 md:gap-4 w-8/12 md:justify-items-center">
         {options.map((item, index) => (
           <button
@@ -49,6 +50,7 @@ const Answers: React.FC<AnswersProps> = ({
           </button>
         ))}
       </div>
+    </div>
   );
 };
 
