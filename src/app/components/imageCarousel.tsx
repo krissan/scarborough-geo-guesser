@@ -90,8 +90,11 @@ const ImageCarousel: React.FC<ImageCarouselProps> = ({
       </div>
 
       {/* Image container */}
-      <div className="relative h-[500px] md:h-[700px] flex justify-center items-center w-screen">
-        <div className={`w-4/5 h-full mx-auto ${imageLoading || loading ? "animate-pulse bg-gray" : ""}`}>
+
+      <div className="overflow-x-auto w-screen flex">
+  <div className="relative h-[500px] md:h-[700px] min-w-[100vw] flex-shrink-0 flex justify-center items-center">
+  
+        <div className={`w-4/5 h-full ${imageLoading || loading ? "animate-pulse bg-gray" : ""}`}>
           {!loading ? (
             <Image
               src={images[displayIndex].image}
@@ -107,6 +110,7 @@ const ImageCarousel: React.FC<ImageCarouselProps> = ({
             <></>
           )}
         </div>
+      </div>
       </div>
 
       {/* Answer section */}
