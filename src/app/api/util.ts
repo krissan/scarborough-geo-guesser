@@ -4,6 +4,7 @@ import { Option } from "../components/answers";
 
 const url = process.env.NEXT_PUBLIC_BASE_URL;
 
+// helper function to shuffle array
 const shuffleArray = <T>(array: T[]): T[] => {
   for (let i = array.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
@@ -12,9 +13,10 @@ const shuffleArray = <T>(array: T[]): T[] => {
   return array;
 };
 
-
+// get photo questions and construct multiple choice questions
 export const fetchPhotos = async () => {
     try{
+      // grab photo questions
       const response = await fetch(url+'/api/photos', {
         method: 'GET',
         headers: { 'Content-Type': 'application/json' },
@@ -27,12 +29,14 @@ export const fetchPhotos = async () => {
       const responseText = await response.text();
       const photos:Photo[] = JSON.parse(responseText);
 
+      // grab multiple choice options
       const answers:string[] = await fetchAnswers();
 
       if (!answers || answers.length === 0) {
         throw new Error(`Could not process photos into questions due to there being no answers`);
       }
 
+      // generate multiple choice questions from photos and answers  
       const imageQuestions:ImageQuestion[] = photos.map(photo=> {
         const options: Option[] = [];
         const uniqueOptionsSet = new Set<string>(); // Use a set to avoid duplicates
@@ -45,6 +49,7 @@ export const fetchPhotos = async () => {
             options.push({ option: photo.throwOffAnswer, selected: false });
         }
 
+        // add answers randomly until there are 4 multiple choice options
         while (options.length < 4) {
             const randomIndex = Math.floor(Math.random() * answers.length);
             const randomAnswer = answers[randomIndex];
@@ -55,10 +60,13 @@ export const fetchPhotos = async () => {
             }
         }
     
+        // randomize order of multiple choice options
         const shuffledOptions = shuffleArray(options);
         const answerIndex = shuffledOptions.findIndex(opt => opt.option === photo.answer);
 
+        // convert photo image data to url
         const photoImg = getSanityImageUrl(photo.img.asset!._ref);
+
 
         const imageQuestion:ImageQuestion = {
             image: photoImg,
@@ -70,11 +78,12 @@ export const fetchPhotos = async () => {
         }
 
         return imageQuestion;
-        });
+      });
     
-        const shuffleImageQuestion = shuffleArray(imageQuestions);
+      // shuffle image questions
+      const shuffleImageQuestion = shuffleArray(imageQuestions);
         
-        return shuffleImageQuestion;
+      return shuffleImageQuestion;
     } catch (err) {
       console.error("Fetch Error:", err);
       return [];
@@ -89,6 +98,7 @@ const getSanityImageUrl = (imageRef: string) => {
   return `https://cdn.sanity.io/images/${process.env.NEXT_PUBLIC_SANITY_PROJECT_ID}/${process.env.NEXT_PUBLIC_SANITY_DATASET}/${imageUrl}.${imageType}`;
 }
 
+//grab multiple choice options
 export const fetchAnswers = async () => {
   try {
     const response = await fetch(url + '/api/answers', {

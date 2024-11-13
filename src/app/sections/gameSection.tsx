@@ -11,6 +11,7 @@ interface GameSectionProps {
   setPhotos: (img: ImageQuestion[]) => void;
 }
 
+// Main Component for Game
 const GameSection: React.FC<GameSectionProps> = ({ photos, setPhotos }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -19,7 +20,9 @@ const GameSection: React.FC<GameSectionProps> = ({ photos, setPhotos }) => {
   const [images, setImages] = useState<ImageQuestion[]>([]);
   const [isFadingIn, setIsFadingIn] = useState(false);
   const [winState, setWinState] = useState(false)
+  const [totalTime, setTotalTime] = useState(0)
 
+  // When photos are available, populate Images and fade in the game
   useEffect(() => {
     if (photos && photos.length > 0) {
       setImages(photos);
@@ -32,6 +35,7 @@ const GameSection: React.FC<GameSectionProps> = ({ photos, setPhotos }) => {
     }, 500);
   }, [photos]);
 
+  // When all questions are answered correct fade out and set win state to true
   useEffect(()=>{
     if(corrects >= 8){
       setIsFadingIn(false);
@@ -43,6 +47,7 @@ const GameSection: React.FC<GameSectionProps> = ({ photos, setPhotos }) => {
     }
   },[corrects])
 
+  // Update options in multiple choice as selected
   const updateImageOption = (imageIndex: number, optionIndex: number) => {
     const updatedImages = images.map((image, imgIdx) => {
       if (imgIdx === imageIndex) {
@@ -59,17 +64,22 @@ const GameSection: React.FC<GameSectionProps> = ({ photos, setPhotos }) => {
     setImages(updatedImages); // Properly update the state with a new array
   };
 
-  const increaseCorrects = (index: number, option: number) => {
+  // When question is answered correctly
+  const increaseCorrects = (index: number, option: number, timeTaken: number) => {
     setCorrects(corrects + 1);
     setCurrentIndex(corrects+1);
+    console.log(totalTime)
+    setTotalTime(totalTime+timeTaken);
     updateImageOption(index, option);
   };
 
+  // When question is answered incorrectly
   const increaseWrongs = (index: number, option: number) => {
     setWrongs(wrongs + 1);
     updateImageOption(index, option);
   };
 
+  // Reset game state when play again is selected
   const resetGame = async() => {
     setCorrects(0);
     setWrongs(0);
@@ -79,16 +89,20 @@ const GameSection: React.FC<GameSectionProps> = ({ photos, setPhotos }) => {
     setPhotos(newPhotos);
     setLoading(false);
     setIsFadingIn(false);
+    setTotalTime(0);
   };
 
   return <div className={`flex flex-col w-full justify-start flex-grow transition-opacity duration-500 ${
     isFadingIn ? "opacity-100" : "opacity-0"}`}>
+        {/* Display game progress */}
         <TimeLine corrects={corrects} setCurrentIndex={setCurrentIndex} currentIndex={currentIndex} />
       {winState ? (
+      /* Display win screen */
       <div className="flex mt-20 justify-center">
         <CongratulationSection playAgain={resetGame} corrects={corrects} wrongs={wrongs} />
       </div>
     ) : (
+        /* Display Current Question*/
         <ImageCarousel
           loading={loading}
           images={images}
@@ -96,6 +110,7 @@ const GameSection: React.FC<GameSectionProps> = ({ photos, setPhotos }) => {
           increaseCorrects={increaseCorrects}
           increaseWrongs={increaseWrongs}
           corrects={corrects}
+          totalTime={totalTime}
         />
     )}
   </div>

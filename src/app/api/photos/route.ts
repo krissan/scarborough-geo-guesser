@@ -12,15 +12,16 @@ type Data = {
   photos: Photo[];
 };
 
+// Get 10 random photo questions
 export async function GET() {
   try {
-    // Step 1: Fetch all photo IDs
+    // fetch all photo IDs
     const allPhotoIds: { _id: string }[] = await sanityClient.fetch(allPhotoIdsQuery, undefined,  { cache: 'no-store' });
 
-    // Step 2: Select 10 random IDs
+    // select 10 random IDs
     const randomIds = getRandomElements(allPhotoIds.map(photo => photo._id), 10);
 
-    // Step 3: Fetch photos using the selected random IDs
+    // fetch photos using the selected random IDs
     const data: Data = await sanityClient.fetch(photosByIdsQuery(randomIds), { ids: randomIds });
 
     return NextResponse.json(data);

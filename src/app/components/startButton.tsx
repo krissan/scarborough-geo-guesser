@@ -7,6 +7,7 @@ interface StartButtonProps {
   onClick?: () => void;  // Add an optional onClick handler for external control
 }
 
+// Component for button to start game
 const StartButton: React.FC<StartButtonProps> = ({ children, onClick }) => {
   return (
     <button

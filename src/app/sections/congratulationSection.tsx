@@ -8,6 +8,8 @@ interface CongratulationSectionProps {
   playAgain: () => void;
 }
 
+
+// Win screen for game
 const CongratulationSection: React.FC<CongratulationSectionProps> = ({ corrects, wrongs, playAgain }) => {
   return (
     <div className="flex flex-col items-center sm:flex-row sm:justify-around px-10">
