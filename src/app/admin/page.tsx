@@ -4,6 +4,8 @@ import React, { useState } from "react";
 import Papa from "papaparse"; 
 import TextInput from "./Components/TextBox";
 import InputFile from "./Components/InputFile"; 
+import SubmitButton from "./Components/SubmitButton";
+
 interface CSVRow {
   author: string;
   authorLink: string;
@@ -124,7 +126,7 @@ const ManageGame = () => {
           value={formData.name}
           onChange={handleInputChange}
           errormessage={errors.name}
-          placeholder="Enter your name"
+          placeholder="Name"
         />
 
         <TextInput
@@ -149,12 +151,7 @@ const ManageGame = () => {
         />
 
         <div className="mt-auto">
-          <button
-            type="submit"
-            className="w-full px-6 py-3 bg-black text-white rounded-full shadow"
-          >
-            Submit
-          </button>
+          <SubmitButton text="Submit"/>
         </div>
       </form>
     </div>

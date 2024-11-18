@@ -18,7 +18,7 @@ const TextInput = forwardRef<HTMLInputElement, Props>(({ className, ...props }, 
       <input
         {...props}
         ref={ref}
-        className={`block p-2.5 w-full text-sm text-black font-bold rounded-lg shadow-sm border-2 border-black ${className || ""}`}
+        className={`block p-2.5 w-full text-sm text-black font-bold rounded-lg shadow-sm  ${className || ""}`}
       />
     </InputContainer>
   );
