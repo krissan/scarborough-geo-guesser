@@ -5,6 +5,7 @@ import Papa from "papaparse";
 import TextInput from "./Components/TextBox";
 import InputFile from "./Components/InputFile"; 
 import SubmitButton from "./Components/SubmitButton";
+import LinkButton from "../components/linkButton";
 
 interface CSVRow {
   author: string;
@@ -112,7 +113,8 @@ const ManageGame = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col justify-between p-5 w-full max-w-md mx-auto">
+    <div className="min-h-screen flex flex-col text-black">
+      <div className="flex-grow flex flex-col justify-center p-5 w-full max-w-md mx-auto">
       <form onSubmit={handleSubmit} className="flex flex-col flex-grow">
         <label className="block text-center text-lg font-semibold text-black mb-2">
           Create A Game
@@ -154,7 +156,17 @@ const ManageGame = () => {
           <SubmitButton text="Submit"/>
         </div>
       </form>
+
+    </div>            <div className="flex flex-row justify-around w-full h-auto py-2">
+        <LinkButton link="https://krissan-portfolio-site-krissans-projects.vercel.app/">
+          A project by Krissan Veerasingam
+        </LinkButton>
+        <LinkButton link="https://www.scarboroughspots.com/">
+          Inspired by Scarborough Spots
+        </LinkButton>
+      </div>
     </div>
+
   );
 };
 
