@@ -20,14 +20,14 @@ interface CSVRow {
 const ManageGame = () => {
   const [formData, setFormData] = useState({
     name: "",
-    number: "",
-    csvData: null as CSVRow[] | null,
+    attendees: "",
+    items: null as CSVRow[] | null,
   });
 
   const [errors, setErrors] = useState({
     name: "",
-    number: "",
-    csvFile: "",
+    attendees: "",
+    items: "",
   });
 
   const [fileName, setFileName] = useState<string>("");
@@ -37,7 +37,7 @@ const ManageGame = () => {
 
     setFormData({
       ...formData,
-      [name]: name === "number" ? value : value,
+      [name]: value,
     });
 
     setErrors({
@@ -46,118 +46,159 @@ const ManageGame = () => {
     });
   };
 
+  const expectedHeaders = [
+    "author",
+    "authorLink",
+    "answer",
+    "throwOffAnswer1",
+    "throwOffAnswer2",
+    "throwOffAnswer3",
+    "img",
+  ];
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-
+  
     if (file && (file.type === "text/csv" || file.type === "application/vnd.ms-excel")) {
       Papa.parse(file, {
         header: true,
         skipEmptyLines: true,
         complete: (result) => {
-          console.log("Parsed CSV Data:", result.data);
-
+          const parsedData = result.data as CSVRow[];
+          const headers = result.meta.fields;
+  
+          // Validate headers
+          if (!headers || !expectedHeaders.every((header) => headers.includes(header))) {
+            setErrors({
+              ...errors,
+              items: "CSV file is missing required headers or has invalid headers.",
+            });
+            e.target.value = ""; // Clear the file input
+            return; // Do not overwrite existing data
+          }
+  
+          // Validate rows
+          const invalidRow = parsedData.find((row) =>
+            expectedHeaders.some((key) => !row[key as keyof CSVRow]?.trim())
+          );
+  
+          if (invalidRow) {
+            setErrors({
+              ...errors,
+              items: "CSV file contains rows with empty values.",
+            });
+            e.target.value = ""; // Clear the file input
+            return; // Do not overwrite existing data
+          }
+  
+          // If valid, update the state
           setFormData({
             ...formData,
-            csvData: result.data as CSVRow[],
+            items: parsedData,
           });
           setFileName(file.name);
           setErrors({
             ...errors,
-            csvFile: "",
+            items: "",
           });
         },
         error: () => {
           setErrors({
             ...errors,
-            csvFile: "Error parsing the CSV file.",
+            items: "Error parsing the CSV file.",
           });
+          e.target.value = ""; // Clear the file input
         },
       });
     } else {
       setErrors({
         ...errors,
-        csvFile: "Please select a valid CSV file.",
+        items: "Please select a valid CSV file.",
       });
+      e.target.value = ""; // Clear the file input
     }
   };
-
+  
+  
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-
+  
     let valid = true;
-    const newErrors = { name: "", number: "", csvFile: "" };
-
+    const newErrors = { name: "", attendees: "", items: "" };
+  
     if (!formData.name) {
       valid = false;
       newErrors.name = "Name is required.";
     }
-
-    if (!formData.number || isNaN(Number(formData.number)) || Number(formData.number) < 1) {
+  
+    if (!formData.attendees || isNaN(Number(formData.attendees)) || Number(formData.attendees) < 1) {
       valid = false;
-      newErrors.number = "Maximum Participants must be 1 or greater.";
+      newErrors.attendees = "Maximum Participants must be 1 or greater.";
     }
-
-    if (!formData.csvData) {
+  
+    if (!formData.items) {
       valid = false;
-      newErrors.csvFile = "CSV file is required.";
+      newErrors.items = "CSV file is required and must have correct headers.";
     }
-
+  
     setErrors(newErrors);
-
+  
     if (valid) {
       alert(`Submitted Data:
-      Name: ${formData.name}
-      Number: ${formData.number}
-      CSV Data: ${JSON.stringify(formData.csvData, null, 2)}`);
+        name: ${formData.name}
+        attendees: ${formData.attendees}
+        items: ${JSON.stringify(formData.items, null, 2)}`);
     }
   };
+  
 
   return (
     <div className="min-h-screen flex flex-col text-black">
       <div className="flex-grow flex flex-col justify-center p-5 w-full max-w-md mx-auto">
-      <form onSubmit={handleSubmit} className="flex flex-col flex-grow">
-        <label className="block text-center text-lg font-semibold text-black mb-2">
-          Create A Game
-        </label>
+        <form onSubmit={handleSubmit} className="flex flex-col">
+          <label className="block text-center text-lg font-semibold text-black mb-2">
+            Create A Game
+          </label>
 
-        <TextInput
-          label="Name"
-          name="name"
-          id="name"
-          type="text"
-          value={formData.name}
-          onChange={handleInputChange}
-          errormessage={errors.name}
-          placeholder="Name"
-        />
+          <TextInput
+            label="Name"
+            name="name"
+            id="name"
+            type="text"
+            value={formData.name}
+            onChange={handleInputChange}
+            errormessage={errors.name}
+            placeholder="Name"
+          />
 
-        <TextInput
-          label="Number"
-          name="number"
-          id="number"
-          type="number"
-          value={formData.number}
-          onChange={handleInputChange}
-          errormessage={errors.number}
-          placeholder="Max Participants"
-          min={1}
-        />
+          <TextInput
+            label="Number"
+            name="attendees"
+            id="number"
+            type="number"
+            value={formData.attendees}
+            onChange={handleInputChange}
+            errormessage={errors.attendees}
+            placeholder="Max Participants"
+            min={1}
+          />
 
-        <InputFile
-          label="Upload CSV"
-          name="csvFile"
-          id="csv-upload"
-          errormessage={errors.csvFile}
-          onChange={handleFileChange}
-          fileName={fileName}
-        />
+          <InputFile
+            label="Upload CSV"
+            name="csvFile"
+            id="csv-upload"
+            errormessage={errors.items}
+            onChange={handleFileChange}
+            fileName={fileName}
+          />
 
-        <div className="mt-auto">
-          <SubmitButton text="Submit"/>
-        </div>
-      </form>
-
-    </div>            <div className="flex flex-row justify-around w-full h-auto py-2">
+          <div className="mt-20">
+            <SubmitButton text="Submit"/>
+          </div>
+        </form>
+      </div>
+  
+      {/* Footer */}
+      <div className="h-auto py-2 flex justify-around bg-gray-100">
         <LinkButton link="https://krissan-portfolio-site-krissans-projects.vercel.app/">
           A project by Krissan Veerasingam
         </LinkButton>
@@ -166,8 +207,9 @@ const ManageGame = () => {
         </LinkButton>
       </div>
     </div>
-
   );
+  
+  
 };
 
 export default ManageGame;
