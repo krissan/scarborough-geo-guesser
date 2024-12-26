@@ -1,10 +1,10 @@
 "use client"
 
 import { useEffect, useState } from "react";
-import ImageCarousel, { ImageQuestion } from "../components/imageCarousel";
-import TimeLine from "../components/timeline";
-import CongratulationSection from "./congratulationSection";
+import TimeLine from "../components/Timeline";
+import CongratulationSection from "./CongratulationSection";
 import { fetchPhotos } from "../api/util";
+import GameQuestion, { ImageQuestion } from "../components/GameQuestion";
 
 interface GameSectionProps {
   photos: ImageQuestion[];
@@ -95,7 +95,7 @@ const GameSection: React.FC<GameSectionProps> = ({ photos, setPhotos }) => {
   return <div className={`flex flex-col w-full justify-start flex-grow transition-opacity duration-500 ${
     isFadingIn ? "opacity-100" : "opacity-0"}`}>
         {/* Display game progress */}
-        <TimeLine corrects={corrects} setCurrentIndex={setCurrentIndex} currentIndex={currentIndex} />
+        <TimeLine completed={corrects} setCurrentIndex={setCurrentIndex} currentIndex={currentIndex} type="player" />
       {winState ? (
       /* Display win screen */
       <div className="flex mt-20 justify-center">
@@ -103,7 +103,7 @@ const GameSection: React.FC<GameSectionProps> = ({ photos, setPhotos }) => {
       </div>
     ) : (
         /* Display Current Question*/
-        <ImageCarousel
+        <GameQuestion
           loading={loading}
           images={images}
           currentIndex={currentIndex}

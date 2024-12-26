@@ -7,7 +7,7 @@ type Props = {
   children: React.ReactNode;
 };
 
-const InputContainer = ({ text, id, errorMessage, children }: Props) => {
+const InputContainer = ({ errorMessage, children }: Props) => {
   return (
     <div className="mb-5 flex flex-col w-full">
       <div className="w-full">

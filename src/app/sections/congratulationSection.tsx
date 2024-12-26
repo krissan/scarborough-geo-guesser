@@ -1,5 +1,5 @@
-import StartButton from "../components/startButton";
-import Title from "../components/title";
+import MainButton from "../components/buttons/MainButton";
+import Title from "../components/Title";
 import Image from "next/image";
 
 interface CongratulationSectionProps {
@@ -20,7 +20,7 @@ const CongratulationSection: React.FC<CongratulationSectionProps> = ({ corrects,
           <div>{wrongs === 0 ? "Perfect Score: " : "Score: "} {corrects - wrongs}</div>
         </div>
 
-        <StartButton onClick={playAgain}>Play Again</StartButton>
+        <MainButton onClick={playAgain}>Play Again</MainButton>
       </div>
 
       <Image

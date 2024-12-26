@@ -9,6 +9,7 @@ const nextConfig = {
             pathname: '/images/**',
           },
         ],
+        domains: ['upload.wikimedia.org'], //update this
       },
   };;
 

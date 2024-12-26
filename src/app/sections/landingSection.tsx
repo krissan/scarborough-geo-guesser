@@ -1,5 +1,5 @@
-import StartButton from "../components/startButton";
-import Title from "../components/title";
+import MainButton from "../components/buttons/MainButton";
+import Title from "../components/Title";
 import Image from "next/image";
 
 interface LandingSectionProps {
@@ -17,7 +17,7 @@ const LandingSection: React.FC<LandingSectionProps> = ({ startGame }) => {
         </div>
 
         {/* Trigger startGame when Play button is clicked */}
-        <StartButton onClick={startGame}>Play</StartButton>
+        <MainButton onClick={startGame}>Play</MainButton>
       </div>
 
       <Image src="/assets/LandingImage.png" alt="Landing Image" width="100" height="40" className="object-contain mt-8 w-12 sm:w-32 sm:mt-0" />

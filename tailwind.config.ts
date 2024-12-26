@@ -23,12 +23,15 @@ const config: Config = {
     colors: {
       'white': '#fffbf2',
       'orange': '#ed7f1a',
-      'black': '#1b1b1b',
+      'black': '#35363E',
       'blue': '#3366CC',
       'darkBlue': '#0067db',
       'green':'#56aa55',
+      'darkGreen': '#6E8A3F',
       'red': '#f87060',
+      'darkRed': '#D9534F',
       'gray': '#E5E1D9',
+      'lightGray': '#D9D9D9',
       'darkGray': '#757472',
       'darkPurple': '#8F4B9B',
       'purple': '#D8BADE'
