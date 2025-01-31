@@ -7,8 +7,9 @@ interface GameRowProps {
   date: string;
   onHostClick: () => void;
   onDeleteClick: () => void;
+  onUnHostClick?: () => void;
   loading?: boolean;
-  disabled?: boolean;
+  selected?: boolean;
 }
 
 const GameRow: React.FC<GameRowProps> = ({
@@ -16,11 +17,12 @@ const GameRow: React.FC<GameRowProps> = ({
   date,
   onHostClick,
   onDeleteClick,
+  onUnHostClick,
   loading,
-  disabled=false
+  selected=false
 }) => {
   return (
-    <div className={`flex items-center justify-between gap-4 py-2 w-full ${disabled ? "opacity-50" : ""}`}>
+    <div className={`flex items-center justify-between gap-4 py-2 w-full`}>
       {/* Game name */}
       <span className="font-bold text-lg flex-grow break-words">{gameName}</span>
 
@@ -29,11 +31,11 @@ const GameRow: React.FC<GameRowProps> = ({
 
       {/* Host button */}
       <div className="flex-none">
-        <HostButton text="Host" onClick={onHostClick} loading={loading} disabled={disabled} />
+        <HostButton text={selected ? "Un-Host" : "Host"} onClick={selected ? onUnHostClick : onHostClick } loading={loading}  />
       </div>
 
       {/* Delete button */}
-      <DeleteButton onClick={onDeleteClick} loading={loading} disabled={disabled} />
+      <DeleteButton onClick={onDeleteClick} loading={loading} disabled={selected} />
     </div>
   );
 };

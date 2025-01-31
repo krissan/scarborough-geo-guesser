@@ -5,7 +5,7 @@ const AnswersSkeleton = () => {
       {Array.from({ length: 4 }).map((_, index) => (
         <div
           key={index}
-          className="animate-pulse flex flex-row items-center justify-start p-2 mt-4 rounded-lg border-black border-2 w-48 min-h-10 text-left
+          className="animate-pulse flex flex-row items-center justify-start p-2 mt-4 rounded-lg border-black border-2 w-6/12 min-h-10 text-left
             shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] bg-gray-300"
         >
           <div className="pl-2 pr-4 h-4 w-6 bg-gray-400 rounded-md"></div>

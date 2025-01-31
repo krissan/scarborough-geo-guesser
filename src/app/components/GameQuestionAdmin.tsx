@@ -29,25 +29,11 @@ const GameQuestionAdmin: React.FC<GameQuestionAdminProps> = ({
   images,
   currentIndex,
   loading,
-  totalTime
+  totalTime,
 }) => {
   const [displayIndex, setDisplayIndex] = useState(currentIndex); // index at which to display image  
   const [imageLoading, setImageLoading] = useState(true); // tracks whether image has been loaded for display
-  const [startTime, setStartTime] = useState(0); // track start time of each question
-  const [displayedTime, setDisplayedTime] = useState((totalTime / 1000).toFixed(2)); // elapsed-time to be displayed
-  const [timing, setTiming] = useState(false); // tracks wether player should be being timed
 
-  // Update time being displayed
-  useEffect(() => { 
-    const interval = setInterval(() => {
-      if(timing){
-        const timeTaken = totalTime + (Date.now() - startTime) / 1000;
-        setDisplayedTime((timeTaken).toFixed(2));
-      }
-    }, 500);
-
-    return () => clearInterval(interval); // Clean up on unmount
-  }, [startTime, timing, totalTime]);
 
   // Fade out current image when current index is updated
   useEffect(() => {
@@ -85,7 +71,7 @@ const GameQuestionAdmin: React.FC<GameQuestionAdminProps> = ({
             <ImageHeaderSkeleton/>
           )}
         </div>
-        <div className="flex justify-start text-black"><div className="text-darkGray pr-1">Total Time: </div>{displayedTime}</div>
+        <div className="flex justify-start text-black"><div className="text-darkGray pr-1">Total Time: </div>{totalTime}</div>
       </div>
 
       {/* Image container */}
@@ -99,8 +85,6 @@ const GameQuestionAdmin: React.FC<GameQuestionAdminProps> = ({
                 imageLoading={imageLoading}
                 onLoad={() => {
                   setImageLoading(false);
-                  setStartTime(Date.now());
-                  setTiming(true);
                 }}
               />
             ) : (

@@ -6,7 +6,7 @@ import { LoginResponse,LogoutResponse, GraphQLResponse } from "./responseInterfa
 const url = process.env.NEXT_PUBLIC_SERVER_URL + "/graphql" || "http://localhost:4000/graphql";
 
 // Create the getAuth function
-const getAuth = async (email: string, password: string): Promise<LoginResponse> => {
+const getAuth = async (email: string, password: string) => {
   const query = `
     mutation {
       login(email: "${email}", password: "${password}") {
@@ -38,7 +38,15 @@ const getAuth = async (email: string, password: string): Promise<LoginResponse> 
       throw new Error(result.errors.map(err => err.message).join(", "));
     }
 
-    return result.data.login;
+    const { userId, token, accessToken, refreshToken, tokenExpiration } = result.data.login;
+
+    //store access token and token and set token expiration        
+    sessionStorage.setItem("accessToken", accessToken);
+    sessionStorage.setItem("token", token);
+    sessionStorage.setItem("tokenExpiration", tokenExpiration);
+    sessionStorage.setItem("refreshToken", refreshToken);
+    sessionStorage.setItem("userId", userId);
+
   } catch (error) {
     console.error("Error during authentication:", error);
     throw error;
@@ -62,8 +70,6 @@ const logout = async () => {
       body: JSON.stringify({ query }),
     });
 
-    console.log(response);
-
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
@@ -81,45 +87,70 @@ const logout = async () => {
 
 const checkAuth = async (router:AppRouterInstance) => {
   const tokenExpiration = sessionStorage.getItem("tokenExpiration");
-  console.log(tokenExpiration);
+
   if (tokenExpiration) {
-    const expirationTime = new Date(tokenExpiration).getTime();
-    const currentTime = new Date().getTime();
+    const expirationTime = new Date(tokenExpiration);
+    const currentTime = new Date();
     if (currentTime >= expirationTime) {
       sessionStorage.removeItem("token");
       sessionStorage.removeItem("accessToken");
       sessionStorage.removeItem("tokenExpiration");
+      sessionStorage.removeItem("refreshToken");
+      sessionStorage.removeItem("userId");
       router.push('/login'); // Redirect to login if token has expired
     }
-  } 
-  /*
-    const query = `
-      query {
-        checkAuth
-      }
-    `;
-
-    try {
-      const response = await fetch(url, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ query }),
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const result: GraphQLResponse<{ checkAuth: boolean }> = await response.json();
-
-      return result.data.checkAuth;
-    } catch (error) {
-      console.error("Error during authentication:", error);
-      throw error;
+    else
+    {
+      // Refresh token
+      refreshAuth();
     }
-  */
+  } else {
+    router.push('/login'); // Redirect to login if no token
+  }
+}
+
+const refreshAuth = async () => {
+  const query = `
+    mutation {
+      refreshToken {
+        userId
+        token
+        accessToken
+        refreshToken
+        tokenExpiration
+      }
+    }
+  `;
+
+  try {
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer " + sessionStorage.getItem("refreshToken"),
+      },  
+      body: JSON.stringify({ query }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const result: GraphQLResponse<{ refreshToken: LoginResponse }> = await response.json();
+
+    if(result.data.refreshToken)
+    {
+      const { refreshToken, accessToken, token, tokenExpiration, userId } = result.data.refreshToken;
+     
+      sessionStorage.setItem("accessToken", accessToken);
+      sessionStorage.setItem("token", token);
+      sessionStorage.setItem("tokenExpiration", tokenExpiration);
+      sessionStorage.setItem("refreshToken", refreshToken);
+      sessionStorage.setItem("userId", userId);
+    }
+  } catch (err) {
+    console.error("Fetch Error:", err);
+  }
 }
 
 

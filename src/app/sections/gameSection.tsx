@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import TimeLine from "../components/Timeline";
-import CongratulationSection from "./CongratulationSection";
+import CongratulationSection from "./congratulationSection";
 import { fetchPhotos } from "../api/util";
 import GameQuestion, { ImageQuestion } from "../components/GameQuestion";
 
@@ -68,7 +68,6 @@ const GameSection: React.FC<GameSectionProps> = ({ photos, setPhotos }) => {
   const increaseCorrects = (index: number, option: number, timeTaken: number) => {
     setCorrects(corrects + 1);
     setCurrentIndex(corrects+1);
-    console.log(totalTime)
     setTotalTime(totalTime+timeTaken);
     updateImageOption(index, option);
   };
@@ -95,7 +94,7 @@ const GameSection: React.FC<GameSectionProps> = ({ photos, setPhotos }) => {
   return <div className={`flex flex-col w-full justify-start flex-grow transition-opacity duration-500 ${
     isFadingIn ? "opacity-100" : "opacity-0"}`}>
         {/* Display game progress */}
-        <TimeLine completed={corrects} setCurrentIndex={setCurrentIndex} currentIndex={currentIndex} type="player" />
+        <TimeLine completed={corrects} setCurrentIndex={setCurrentIndex} currentIndex={currentIndex} />
       {winState ? (
       /* Display win screen */
       <div className="flex mt-20 justify-center">

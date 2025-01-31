@@ -8,7 +8,7 @@ import Title from "../components/Title";
 import { useRouter } from "next/navigation";
 import AuthButton from "../components/buttons/AuthButton";
 import { checkAuth, logout } from "../services/auth";
-import { deleteGame, fetchGames, getHostGame, setHostGame } from "../services/admin";
+import { deleteGame, fetchGames, getHostGame, removeHostGame, setHostGame } from "../services/admin";
 import { HostGame } from "../services/responseInterfaces";
 import HostedGameDetails from "./HostedGameDetails";
 import AlertBanner from "../components/AlertBanner";
@@ -79,7 +79,6 @@ const GamesMenu = () => {
       if (!newHostedGame) {
         return;
       }
-
       setHostedGame(newHostedGame);
     }
     catch (error) {
@@ -112,6 +111,24 @@ const GamesMenu = () => {
     router.push("/createGame");
   };
 
+  const handleUnHostClick = async() => {
+    try {
+      setUpdatingGameData(true); // Show loading state for this game
+      await checkAuth(router);
+      const result = await removeHostGame();
+      if (!result) {
+        setUpdatingGameData(false); // Reset loading state on failure
+        return;
+      }
+      setHostedGame(null);
+    }
+    catch (error) {
+      setErrorMessage("Failed to unhost game. Please try again later.");
+      console.error(error);
+    }
+    setUpdatingGameData(false); // Reset loading state after success
+  }
+
   return (
     <div className="min-h-screen flex flex-col text-black">
       {errormessage && (
@@ -132,8 +149,9 @@ const GamesMenu = () => {
               date={game.date}
               loading={updatingGameData}
               onHostClick={() => handleHostClick(game.id, game.date)}
+              onUnHostClick={() => handleUnHostClick()}
               onDeleteClick={() => handleDeleteClick(game.id, game.date)}
-              disabled={game.id === hostedGame?.gameId}
+              selected={game.id === hostedGame?.gameId}
             />
           ))}
         </div>

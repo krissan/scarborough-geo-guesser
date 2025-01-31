@@ -1,6 +1,6 @@
 "use client";
 
-import { Game, GraphQLResponse, ListGamesResponse, Question, CreateGameResponse, HostGame } from "./responseInterfaces";
+import { Game, GraphQLResponse, ListGamesResponse, Question, CreateGameResponse, HostGame, PlayerListResponse } from "./responseInterfaces";
 
 const url = process.env.NEXT_PUBLIC_SERVER_URL + "/graphql" || "http://localhost:4000/graphql";
 
@@ -24,7 +24,6 @@ const fetchGames = async() => {
         }
     }
     `;
-    console.log(query)
     try {
         const response = await fetch(url, {
         method: "POST",
@@ -35,7 +34,6 @@ const fetchGames = async() => {
         body: JSON.stringify({ query }),
         });
 
-        console.log(response)
 
         if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -76,6 +74,7 @@ const createGame = async (gameName: string, questions: Question[]) => {
                 text
                 updateDate
             }
+            gameUpdateDate
         }
     }
     `;
@@ -135,6 +134,7 @@ const fetchGame = async (gameId: string) => {
                 text
                 updateDate
             }
+            gameUpdateDate
         }
     }`;
 
@@ -233,6 +233,7 @@ const setHostGame = async (gameId: string, createDate: string) => {
                     text
                     updateDate
                 }
+                gameUpdateDate
             }
         }
     `;
@@ -256,8 +257,6 @@ const setHostGame = async (gameId: string, createDate: string) => {
         if(result.errors) {
             throw new Error(result.errors.map(err => err.message).join(", "));
         }
-        console.log(result);
-        console.log("Host game set successfully:", result.data?.setHostGame);
     } catch (err) {
         console.error("Fetch Error:", err);
         throw "Failed to set host game. Please try again later.";
@@ -290,11 +289,13 @@ const getHostGame = async () => {
                     text
                     updateDate
                 }
+                gameUpdateDate
             }
         }
     `;
 
     try {
+
         const response = await fetch(url, {
             method: "POST",
             headers: {
@@ -309,7 +310,6 @@ const getHostGame = async () => {
         }
 
         const result: GraphQLResponse<{ getHostGame: HostGame }> = await response.json();
-        console.log("Host game retrieved successfully:", result.data?.getHostGame);
         if (!result.data?.getHostGame) {
             console.log("No host game found");
         }
@@ -341,7 +341,6 @@ const removeHostGame = async () => {
         }
 
         const result: GraphQLResponse<{ removeHostGame: Game }> = await response.json();
-        console.log("Host game removed successfully:", result.data);
         if (!result.data?.removeHostGame) {
             console.log("No host game found");
         }
@@ -379,6 +378,7 @@ const updateCurrentQuestion = async (questionId: string, gameId: string, createD
                     text
                     updateDate
                 }
+                gameUpdateDate
             }
         }
     `;
@@ -398,7 +398,6 @@ const updateCurrentQuestion = async (questionId: string, gameId: string, createD
         }
 
         const result: GraphQLResponse<{ updateCurrentQuestion: Question }> = await response.json();
-        console.log("Current question updated successfully:", result.data?.updateCurrentQuestion);
         if (!result.data?.updateCurrentQuestion) {
             console.log("No current question found");
         }
@@ -434,6 +433,7 @@ const startHostGame = async (gameId:string, createDate:string) => {
                 text
                 updateDate
             }
+            gameUpdateDate
         }
     }
     `;
@@ -453,7 +453,6 @@ const startHostGame = async (gameId:string, createDate:string) => {
         }
 
         const result: GraphQLResponse<{ startHostGame: Game }> = await response.json();
-        console.log("Host game started successfully:", result.data);
         if (!result.data?.startHostGame) {
             console.log("No host game found");
         }
@@ -491,7 +490,6 @@ const completeHostGame = async (gameId: string, createDate: string) => {
             console.log("No host game found");
             throw new Error("No host game found");
         }
-        console.log("Host game completed successfully:", result.data);
         return true
     } catch (err) {
         console.error("Fetch Error:", err);
@@ -500,10 +498,10 @@ const completeHostGame = async (gameId: string, createDate: string) => {
     return false;
 }
 
-const restartHostGame = async (gameId: string, createDate: string) => {
+const restartHostGame = async (gameId: string, createDate: string, gameUpdateDate: string) => {
     const query = `
         mutation RestartHostGame {
-            restartHostGame(id: "${gameId}", date: "${createDate}")
+            restartHostGame(id: "${gameId}", date: "${createDate}", gameUpdateDate: "${gameUpdateDate}")
             {
             gameId
             createDate
@@ -527,6 +525,7 @@ const restartHostGame = async (gameId: string, createDate: string) => {
                     text
                     updateDate
             }
+            gameUpdateDate
         }
     }
 
@@ -546,17 +545,14 @@ const restartHostGame = async (gameId: string, createDate: string) => {
         throw new Error(`HTTP error! status: ${response.status}`);
         }
 
-        const result: GraphQLResponse<{ restartHostGame: Game }> = await response.json();
-        console.log("Host game restarted successfully:", result.data);
+        const result: GraphQLResponse<{ restartHostGame: HostGame }> = await response.json();
         if (!result.data?.restartHostGame) {
             console.log("No host game found");
         }
-        return true;
+        return result.data?.restartHostGame;
     } catch (err) {
         console.error("Fetch Error:", err);
     }
-
-    return false;
 }
 
 //implement server side
@@ -587,6 +583,7 @@ const pauseHostGame = async (gameId: string, createDate: string) => {
                     text
                     updateDate
                 }
+                gameUpdateDate
             }
         }
     `;
@@ -606,7 +603,6 @@ const pauseHostGame = async (gameId: string, createDate: string) => {
         }
 
         const result: GraphQLResponse<{ pauseHostGame: Game }> = await response.json();
-        console.log("Host game paused successfully:", result.data);
         if (!result.data?.pauseHostGame) {
             console.log("No host game found");
         }
@@ -645,6 +641,7 @@ const unpauseHostGame = async (gameId: string, createDate: string) => {
                     text
                     updateDate
                 }
+                gameUpdateDate
             }
         }
     `;
@@ -664,7 +661,6 @@ const unpauseHostGame = async (gameId: string, createDate: string) => {
         }
 
         const result: GraphQLResponse<{ unPauseHostGame: Game }> = await response.json();
-        console.log("Host game unpaused successfully:", result.data);
         if (!result.data?.unPauseHostGame) {
             console.log("No host game found");
         }
@@ -676,4 +672,73 @@ const unpauseHostGame = async (gameId: string, createDate: string) => {
     return false;
 }
 
-export { fetchGames, createGame, fetchGame, deleteGame, setHostGame, getHostGame, removeHostGame, restartHostGame, updateCurrentQuestion, startHostGame, completeHostGame, pauseHostGame, unpauseHostGame };
+const getPlayers = async() => {
+    const query = `
+        query GetPlayers {
+            getPlayers {
+                id
+                gameId
+                playerName
+                connected
+                score
+            }
+        }`;
+
+    try {
+        const response = await fetch(url, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": getAuthHeader()
+            },
+            body: JSON.stringify({ query }),
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const result: GraphQLResponse<{ getPlayers: PlayerListResponse[] }> = await response.json();
+        if (!result.data?.getPlayers) {
+            console.log("No players found");
+        }
+        return result.data?.getPlayers
+    }
+    catch (err) {
+        console.error("Fetch Error:", err);
+    }
+}
+
+const removePlayer = async (gameId: string, playerId: string) => {
+    const query = `
+        mutation RemovePlayer {
+            removePlayer(gameId: "${gameId}", playerId: "${playerId}")
+        }
+    `;
+
+    try {
+        const response = await fetch(url, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": getAuthHeader()
+            },
+            body: JSON.stringify({ query }),
+        });
+
+        if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const result: GraphQLResponse<{ removePlayer: boolean }> = await response.json();
+        if (!result.data?.removePlayer) {
+            console.log("No player found");
+        }
+        return true
+    } catch (err) {
+        console.error("Fetch Error:", err);
+        return false;
+    }   
+}
+
+export { fetchGames, createGame, fetchGame, deleteGame, setHostGame, getHostGame, removeHostGame, restartHostGame, updateCurrentQuestion, startHostGame, completeHostGame, pauseHostGame, unpauseHostGame, getPlayers, removePlayer };
