@@ -1,10 +1,10 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Answers, { Option } from "./answers";
-import GameImage from "./gameImage";
-import AnswersSkeleton from "./loading/answersSkeleton";
-import ImageHeaderSkeleton from "./loading/imageHeaderSkeleton";
+import Answers, { Option } from "./Answers";
+import GameImage from "./GameImage";
+import AnswersSkeleton from "./loading/AnswersSkeleton";
+import ImageHeaderSkeleton from "./loading/ImageHeaderSkeleton";
 
 export interface ImageQuestion {
   image: string;
@@ -16,7 +16,7 @@ export interface ImageQuestion {
   questionFormat?:string
 }
 
-interface ImageQuestionProps {
+interface GameQuestionProps {
   images: ImageQuestion[];
   currentIndex: number;
   increaseCorrects: (index: number, option: number, timeTaken:number) => void;
@@ -27,7 +27,7 @@ interface ImageQuestionProps {
 }
 
 // Display Image Question with image, image related info and choices for questions
-const ImageQuestion: React.FC<ImageQuestionProps> = ({
+const GameQuestion: React.FC<GameQuestionProps> = ({
   images,
   currentIndex,
   increaseCorrects,
@@ -112,7 +112,7 @@ const ImageQuestion: React.FC<ImageQuestionProps> = ({
             <ImageHeaderSkeleton/>
           )}
         </div>
-        <div className="flex justify-start"><div className="text-darkGray pr-1">Total Time: </div>{displayedTime}</div>
+        <div className="flex justify-start   text-black"><div className="text-darkGray pr-1">Total Time: </div>{displayedTime}</div>
       </div>
 
       {/* Image container */}
@@ -143,7 +143,7 @@ const ImageQuestion: React.FC<ImageQuestionProps> = ({
         <Answers
           options={images[displayIndex].options}
           answer={images[displayIndex].answer}
-          increaseCorrects={(index, option) => {
+          increaseCorrects={(index: number, option: number) => {
             const timeTaken = (Date.now() - startTime) / 1000;
             increaseCorrects(index, option, timeTaken);
             setTiming(false);
@@ -158,4 +158,4 @@ const ImageQuestion: React.FC<ImageQuestionProps> = ({
   );
 };
 
-export default ImageQuestion;
+export default GameQuestion;

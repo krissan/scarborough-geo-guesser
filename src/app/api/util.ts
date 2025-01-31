@@ -1,6 +1,6 @@
 import { Photo } from "../../../typing";
-import { ImageQuestion } from "../components/imageCarousel";
-import { Option } from "../components/answers";
+import { ImageQuestion } from "../components/GameQuestion";
+import { Option } from "../components/Answers";
 
 const url = process.env.NEXT_PUBLIC_BASE_URL;
 

@@ -1,13 +1,14 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
+import { useRouter } from 'next/navigation';
 import Papa from "papaparse"; 
 import TextInput from "../components/formComponents/TextBox";
 import InputFile from "../components/formComponents/InputFile"; 
 import LinkButton from "../components/buttons/LinkButton";
-import { useRouter } from 'next/navigation';
-import { checkAuth } from "../services/auth";
 import MainButton from "../components/buttons/MainButton";
+import Title from "../components/Title";
+import { checkAuth } from "../services/auth";
 
 interface CSVRow {
   author: string;
@@ -19,7 +20,7 @@ interface CSVRow {
   img: string;
 }
 
-const ManageGame = () => {
+const CreateGame = () => {
   const router = useRouter();
 
   const [formData, setFormData] = useState({
@@ -66,6 +67,7 @@ const ManageGame = () => {
     "throwOffAnswer3",
     "img",
   ];
+
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
   
@@ -166,46 +168,45 @@ const ManageGame = () => {
     <div className="min-h-screen flex flex-col text-black">
       <div className="flex-grow flex flex-col justify-center p-5 w-full max-w-md mx-auto">
         <form onSubmit={handleSubmit} className="flex flex-col">
-          <label className="block text-center text-lg font-semibold text-black mb-2">
-            Create A Game
-          </label>
+          <Title>
+            Create Game
+          </Title>
+          <div className="mb-20" />
+            <TextInput
+              label="Name"
+              name="name"
+              id="name"
+              type="text"
+              value={formData.name}
+              onChange={handleInputChange}
+              errormessage={errors.name}
+              placeholder="Name"
+            />
 
-          <TextInput
-            label="Name"
-            name="name"
-            id="name"
-            type="text"
-            value={formData.name}
-            onChange={handleInputChange}
-            errormessage={errors.name}
-            placeholder="Name"
-          />
+            <TextInput
+              label="Number"
+              name="attendees"
+              id="number"
+              type="number"
+              value={formData.attendees}
+              onChange={handleInputChange}
+              errormessage={errors.attendees}
+              placeholder="Max Participants"
+              min={1}
+            />
 
-          <TextInput
-            label="Number"
-            name="attendees"
-            id="number"
-            type="number"
-            value={formData.attendees}
-            onChange={handleInputChange}
-            errormessage={errors.attendees}
-            placeholder="Max Participants"
-            min={1}
-          />
+            <InputFile
+              label="Upload CSV"
+              name="csvFile"
+              id="csv-upload"
+              errormessage={errors.items}
+              onChange={handleFileChange}
+              fileName={fileName}
+            />
 
-          <InputFile
-            label="Upload CSV"
-            name="csvFile"
-            id="csv-upload"
-            errormessage={errors.items}
-            onChange={handleFileChange}
-            fileName={fileName}
-          />
-
-          <div className="mt-20">
-            <MainButton type="submit">SUBMIT</MainButton>
-          </div>
+          <MainButton type="submit"> SUBMIT </MainButton>
         </form>
+        <MainButton onClick={()=>{router.back()}}>Back</MainButton>
       </div>
   
       {/* Footer */}
@@ -223,4 +224,4 @@ const ManageGame = () => {
   
 };
 
-export default ManageGame;
+export default CreateGame;

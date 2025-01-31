@@ -1,34 +1,23 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import TextInput from "../components/TextInput";
 import LinkButton from "../components/buttons/LinkButton";
-import { getAuth } from "../services/auth";
 import { useRouter } from 'next/navigation';
-import AuthSubmitButton from "../components/buttons/AuthButton";
 import Title from "../components/Title";
+import MainButton from "../components/buttons/MainButton";
 
-const loginFormat = {
-  username: "",
-  password: "",
-};
+const joinFormat = { roomCode: "ABCD" };
 
-const LoginPage = () => {
+const JoinGamePage = () => {
   const router = useRouter();
 
-  //navigate if session token exists
-  useEffect(() => {
-    if (sessionStorage.getItem("token")) {
-      router.push('/gamesMenu');
-    }
-  }, []);
-
   const [formData, setFormData] = useState({
-    ...loginFormat,
+    ...joinFormat
   });
 
   const [errors, setErrors] = useState({
-    ...loginFormat,
+    ...joinFormat
   });
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -49,29 +38,32 @@ const LoginPage = () => {
     e.preventDefault();
 
     let valid = true;
-    const newErrors = { ...loginFormat };
+    const newErrors = { ...joinFormat };
 
-    if (!formData.username.trim()) {
+    if (!formData.roomCode.trim()) {
       valid = false;
-      newErrors.username = "Username is required.";
-    }
-
-    if (!formData.password.trim()) {
-      valid = false;
-      newErrors.password = "Password is required.";
+      newErrors.roomCode = "Room code is required.";
     }
 
     setErrors(newErrors);
 
     if (valid) {  
       try {
-        await getAuth(formData.username, formData.password);
-        router.push('/gamesMenu');
+        // Temporary code to bypass to join game
+        if(formData.roomCode.toUpperCase() == "ABCD")
+        {
+          router.push('/player');
+        }
+        else
+        {
+          newErrors.roomCode = "Invalid room code.";
+          setErrors(newErrors);
+        }
 
       } catch (error) {
         // Handle errors from the async operation
         console.error("Error during login:", error);
-        setErrors({ username: "", password: "Invalid credentials." });
+        setErrors({ roomCode: "Invalid room code" });
       }
     }
   };
@@ -80,32 +72,21 @@ const LoginPage = () => {
     <div className="min-h-screen flex flex-col text-black">
       <div className="flex-grow flex flex-col justify-center p-5 w-full max-w-sm mx-auto">
         <form onSubmit={handleSubmit} className="flex flex-col">
-          <Title>Admin Login</Title>
+          <Title>Join Game</Title>
 
           <TextInput
-            label="Username"
-            name="username"
-            id="username"
+            label="Enter Room Code"
+            name="roomCode"
+            id="roomCode"
             type="text"
-            value={formData.username}
+            value={formData.roomCode}
             onChange={handleInputChange}
-            errormessage={errors.username}
-            placeholder="username"
-          />
-
-          <TextInput
-            label="Password"
-            name="password"
-            id="password"
-            type="password"
-            value={formData.password}
-            onChange={handleInputChange}
-            errormessage={errors.password}
-            placeholder="password"
+            errormessage={errors.roomCode}
+            placeholder="enter code here"
           />
 
           <div className="mt-6">
-            <AuthSubmitButton type="submit" text="LOGIN" />
+            <MainButton type="submit">JOIN GAME</MainButton>
           </div>
         </form>
       </div>
@@ -123,4 +104,4 @@ const LoginPage = () => {
   );
 };
 
-export default LoginPage;
+export default JoinGamePage;
