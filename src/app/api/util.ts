@@ -1,4 +1,4 @@
-import { Photo } from "../../../typing";
+import { Answer, Photo } from "../../../typing";
 import { ImageQuestion } from "../components/GameQuestion";
 import { Option } from "../components/Answers";
 
@@ -12,6 +12,11 @@ const shuffleArray = <T>(array: T[]): T[] => {
   }
   return array;
 };
+
+interface Answer {
+  id: string;
+  text: string;
+}
 
 // get photo questions and construct multiple choice questions
 export const fetchPhotos = async () => {
@@ -28,9 +33,12 @@ export const fetchPhotos = async () => {
   
       const responseText = await response.text();
       const photos:Photo[] = JSON.parse(responseText);
+      console.log(photos)
 
       // grab multiple choice options
-      const answers:string[] = await fetchAnswers();
+      const answers:Answer[] = await fetchAnswers();
+
+      console.log(answers)
 
       if (!answers || answers.length === 0) {
         throw new Error(`Could not process photos into questions due to there being no answers`);
@@ -41,8 +49,11 @@ export const fetchPhotos = async () => {
         const options: Option[] = [];
         const uniqueOptionsSet = new Set<string>(); // Use a set to avoid duplicates
         
-        uniqueOptionsSet.add(photo.answer);
-        options.push({ option: photo.answer, selected: false });
+        // grab random answer from photo and add it to unique option set
+        const randomAnsIndex = Math.floor(Math.random() * answers.length);
+        const randomAns = answers[randomAnsIndex].text;
+        uniqueOptionsSet.add(randomAns);
+        options.push({ option: randomAns, selected: false });
 
         if (photo.throwOffAnswer) {
             uniqueOptionsSet.add(photo.throwOffAnswer);
@@ -51,18 +62,23 @@ export const fetchPhotos = async () => {
 
         // add answers randomly until there are 4 multiple choice options
         while (options.length < 4) {
-            const randomIndex = Math.floor(Math.random() * answers.length);
-            const randomAnswer = answers[randomIndex];
-    
-            if (!uniqueOptionsSet.has(randomAnswer)) {
-              uniqueOptionsSet.add(randomAnswer);
-              options.push({ option: randomAnswer, selected: false });
-            }
+          const randomIndex = Math.floor(Math.random() * answers.length);
+          const randomAnswer = answers[randomIndex];
+  
+          // if answer is not throw off answer or in photo answer, add it to options
+          if (randomAnswer.text !== photo.throwOffAnswer && !uniqueOptionsSet.has(randomAnswer.text)) {
+            photo.answer.forEach((answer) => {
+              if (randomAnswer.text !== answer.text) {
+                uniqueOptionsSet.add(randomAnswer.text);
+                options.push({ option: randomAnswer.text, selected: false });
+              }
+            });
+          }
         }
     
         // randomize order of multiple choice options
         const shuffledOptions = shuffleArray(options);
-        const answerIndex = shuffledOptions.findIndex(opt => opt.option === photo.answer);
+        const answerIndex = shuffledOptions.findIndex(opt => opt.option === randomAns);
 
         // convert photo image data to url
         const photoImg = getSanityImageUrl(photo.img.asset!._ref);
@@ -113,10 +129,10 @@ export const fetchAnswers = async () => {
     const responseText = await response.text();
     const answers = JSON.parse(responseText);
 
-    if (!answers[0].answer) {
+    if (!answers || answers.length === 0) {
       throw new Error('Failed to fetch: answers response');
     }
-    return answers[0].answer;
+    return answers;
   } catch (err) {
     console.error("Fetch Error:", err);
     return [];

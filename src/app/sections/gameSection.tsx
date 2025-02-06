@@ -98,7 +98,7 @@ const GameSection: React.FC<GameSectionProps> = ({ photos, setPhotos }) => {
       {winState ? (
       /* Display win screen */
       <div className="flex mt-20 justify-center">
-        <CongratulationSection playAgain={resetGame} corrects={corrects} wrongs={wrongs} />
+        <CongratulationSection playAgain={resetGame} corrects={corrects} wrongs={wrongs} totalTime={totalTime} />
       </div>
     ) : (
         /* Display Current Question*/

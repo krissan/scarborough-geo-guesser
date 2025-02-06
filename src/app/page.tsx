@@ -6,19 +6,34 @@ import LinkButton from "./components/buttons/LinkButton";
 import GameSection from "./sections/GameSection";
 import LandingSection from "./sections/LandingSection";
 import { ImageQuestion } from "./components/GameQuestion";
+import { getDailyHighScores } from "./services/player";
+import { DailyHighScoreResponse } from "./services/responseInterfaces";
 
 export default function Home() {
   const [photos, setPhotos] = useState<ImageQuestion[]>([]); // Store photos from API
   const [isGameStarted, setIsGameStarted] = useState(false); // Control which section to show
   const [isFadingOut, setIsFadingOut] = useState(false); // Control the fade-out animation
+  const [highScores, setHighScores] = useState<DailyHighScoreResponse[]>([]);
+  const [loadingHighScores, setLoadingHighScores] = useState(true);
 
   useEffect(() => {
+    // Function to fetch all highscores
+    const fetchHighScores = async () => {
+      setLoadingHighScores(true);
+      const data = await getDailyHighScores();
+      if(data){
+        setHighScores(data);
+      }
+      setLoadingHighScores(false);
+    }
+
     // Fetch photos when the component mounts
     const loadPhotos = async () => {
       const fetchedPhotos = await fetchPhotos();
       setPhotos(fetchedPhotos);
     };
     loadPhotos();
+    fetchHighScores();
   }, []);
 
   const startGame = () => {
@@ -38,7 +53,7 @@ export default function Home() {
               isFadingOut ? "opacity-0" : "opacity-100"
             }`}
           >
-            <LandingSection startGame={startGame} />
+            <LandingSection startGame={startGame} highScores={highScores} loadingHighScores={loadingHighScores}/>
           </div>
         ) : (
           <GameSection photos={photos} setPhotos={setPhotos} />

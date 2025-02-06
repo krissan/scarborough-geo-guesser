@@ -122,7 +122,14 @@ interface PlayerListResponse {
 interface PlayerScoreResponse {
     playerId: string;
     playerName: string;
-    score: number;}
+    score: number;
+}
+
+interface DailyHighScoreResponse {
+    playerName: string;
+    score: number;
+}
+
 
 interface PlayerQuestionScoreResponse {
     playerId: string;
@@ -131,4 +138,4 @@ interface PlayerQuestionScoreResponse {
     score: number;  
 }
 
-export type { GraphQLResponse, LoginResponse, LogoutResponse, ListGamesResponse, CreateGameResponse, Game, HostGame, Question, PlayerResponse, HostGameForPlayerResponse, PlayerFinalResultResponse, SetScoreResponse, QuestionImageResponse, PlayerListResponse, PlayerScoreResponse, PlayerQuestionScoreResponse };
+export type { GraphQLResponse, LoginResponse, LogoutResponse, ListGamesResponse, CreateGameResponse, Game, HostGame, Question, PlayerResponse, HostGameForPlayerResponse, PlayerFinalResultResponse, SetScoreResponse, QuestionImageResponse, PlayerListResponse, PlayerScoreResponse, PlayerQuestionScoreResponse, DailyHighScoreResponse };

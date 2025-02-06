@@ -1,4 +1,4 @@
-import {defineField, defineType} from 'sanity'
+import { defineField, defineType } from 'sanity'
 
 export default defineType({
   name: 'photo',
@@ -13,18 +13,24 @@ export default defineType({
     }),
     defineField({
       name: 'authorLink',
-      title: 'AuthorLink',
-      type: 'url'
+      title: 'Author Link',
+      type: 'url',
     }),
     defineField({
       name: 'answer',
-      title: 'Answer',
-      type: 'string',
-      validation: (Rule) => Rule.required(),
+      title: 'Answers',
+      type: 'array',
+      of: [
+        {
+          type: 'reference',
+          to: [{ type: 'answer' }], // This creates the dropdown to select answers
+        },
+      ],
+      validation: (Rule) => Rule.required().min(1).error('At least one answer is required.'),
     }),
     defineField({
       name: 'throwOffAnswer',
-      title: 'ThrowOffAnswer',
+      title: 'Throw Off Answer',
       type: 'string',
     }),
     defineField({
@@ -33,5 +39,5 @@ export default defineType({
       type: 'image',
       validation: (Rule) => Rule.required(),
     }),
-  ]
+  ],
 })
