@@ -95,6 +95,7 @@ const GamesMenu = () => {
         await checkAuth(router);
       const result = await deleteGame(gameId, date);
       if (!result) {
+        alert("Failed to delete game. Please try again later.");
         setUpdatingGameData(false); // Reset loading state on failure
         return;
       }

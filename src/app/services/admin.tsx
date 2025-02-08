@@ -1,6 +1,6 @@
 "use client";
 
-import { Game, GraphQLResponse, ListGamesResponse, Question, CreateGameResponse, HostGame, PlayerListResponse } from "./responseInterfaces";
+import { Game, GraphQLResponse, ListGamesResponse, Question, HostGame, PlayerListResponse, QuestionInput } from "./responseInterfaces";
 
 const url = process.env.NEXT_PUBLIC_SERVER_URL + "/graphql" || "http://localhost:4000/graphql";
 
@@ -52,59 +52,64 @@ const fetchGames = async() => {
 };
 
 // Create a new game
-const createGame = async (gameName: string, questions: Question[]) => {
-    const query = `
-        mutation CreateGame($gameName: String!, $questions: [QuestionInput!]!) {
-        createGame(gameName: $gameName, questions: $questions) {
-            id
-            gameName
-            attendees
-            updateDate
-            questions {
-                id
-                gameId
-                author
-                authorLink
-                answer
-                throwOffAnswer1
-                throwOffAnswer2
-                throwOffAnswer3
-                questionOrder
-                img
-                text
-                updateDate
-            }
-            gameUpdateDate
-        }
-    }
-    `;
+const createGame = async (gameName: string, attendees: number, questions: QuestionInput[]) => {
+    const formattedQuestions = questions
+    .map(question => `{
+        author: "${question.author}",
+        authorLink: "${question.authorLink}",
+        answer: "${question.answer}",
+        throwOffAnswer1: "${question.throwOffAnswer1}",
+        throwOffAnswer2: "${question.throwOffAnswer2}",
+        throwOffAnswer3: "${question.throwOffAnswer3}",
+        questionOrder: ${question.questionOrder},
+        img: "${question.img}",
+        text: "${question.text}"
+    }`)
+    .join(",");
 
-    const variables = {
-        gameName,
-        questions,
-    };
+    const query = `
+        mutation CreateGame {
+            createGame(gameName: "${gameName}", attendees: ${attendees}, questions: [${formattedQuestions}]) {
+                id
+                gameName
+                attendees
+                updateDate
+                questions {
+                    id
+                    gameId
+                    author
+                    authorLink
+                    answer
+                    throwOffAnswer1
+                    throwOffAnswer2
+                    throwOffAnswer3
+                    questionOrder
+                    img
+                    text
+                    updateDate
+                }
+            }
+        }
+    `;
 
     try {
         const response = await fetch(url, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            "Authorization": getAuthHeader()
-
-        },
-        body: JSON.stringify({ query, variables }),
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": getAuthHeader()
+            },
+            body: JSON.stringify({ query }),
         });
 
         if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+            throw new Error(`HTTP error! status: ${response.status}`);
         }
 
-        const result: GraphQLResponse<{ createGame: CreateGameResponse }> = await response.json();
-
-        if (result.data?.createGame) {
-            console.log("Game created successfully:", result.data.createGame);
+        const result: GraphQLResponse<{ createGame: Game }> = await response.json();
+        if (!result.data?.createGame) {
+            console.log("No host game found");
         }
-
         return result.data?.createGame;
     } catch (err) {
         console.error("Fetch Error:", err);
@@ -115,7 +120,7 @@ const createGame = async (gameName: string, questions: Question[]) => {
 const fetchGame = async (gameId: string) => {
     const query = `
         query GetGame($gameId: String!) {
-            getGame(id: $gameId) {
+            getGame(id: "${gameId}") {
             id
             gameName
             attendees
@@ -134,7 +139,6 @@ const fetchGame = async (gameId: string) => {
                 text
                 updateDate
             }
-            gameUpdateDate
         }
     }`;
 
@@ -172,7 +176,7 @@ const fetchGame = async (gameId: string) => {
 const deleteGame = async (gameId: string, date: string) => {
     const query = `
         mutation DeleteGame {
-            deleteGame(id: "${gameId}", date: "${date}") {
+            deleteGame(id: "${gameId}", date: "${date}")
         }
     `;
 
@@ -198,9 +202,9 @@ const deleteGame = async (gameId: string, date: string) => {
 
         if (result.data?.deleteGame) {
             console.log("Game deleted successfully:", result.data.deleteGame);
+            return true;
         }
 
-        return true;
     } catch (err) {
         console.error("Fetch Error:", err);
     }
@@ -233,7 +237,6 @@ const setHostGame = async (gameId: string, createDate: string) => {
                     text
                     updateDate
                 }
-                gameUpdateDate
             }
         }
     `;
