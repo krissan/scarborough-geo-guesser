@@ -10,7 +10,6 @@ import { checkPlayerExists, getHostGameForPlayer, setPlayer } from "../services/
 import PlayerGameScreen from "./PlayerGameScreen";
 import { useRouter } from 'next/navigation';
 import { HostGameForPlayerResponse } from "../services/responseInterfaces";
-import { set } from "sanity";
 
 interface Player {
   playerName: string;

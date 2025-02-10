@@ -1,8 +1,8 @@
 "use client"
 
 import { useEffect, useState } from "react";
-import TimeLine from "../components/timeline";
-import CongratulationSection from "./congratulationSection";
+import TimeLine from "../components/Timeline";
+import CongratulationSection from "./CongratulationSection";
 import { fetchPhotos } from "../api/util";
 import GameQuestion, { ImageQuestion } from "../components/GameQuestion";
 
