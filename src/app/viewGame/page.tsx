@@ -63,7 +63,7 @@ const ManageGame: React.FC = () => {
         }
     }, [countdown]);
 
-    return <div className={`flex flex-col w-screen h-screen justify-center items-center transition-opacity duration-500 p-20`}>
+    return <div className={`flex flex-col w-screen h-screen justify-center items-center transition-opacity duration-500`}>
         {loading ? <Title>Loading...</Title> : 
             (!gameData ? <Title>Game Not Hosted</Title> : 
                 (gameData.startDate ?
@@ -71,42 +71,45 @@ const ManageGame: React.FC = () => {
                             <Title>Game Completed</Title>
                             <PlayerResult gameId={gameData.gameId} />
                         </> : 
-                        <div className="flex flex-col items-center justify-center">
-                            <Title>{gameData?.gameName}</Title>
-                            <MainButton onClick={refreshData}>Refresh</MainButton>
-                            {countdown > 0 ? <div className="text-black font-bold text-[500px]">{countdown}</div> :
-                            <>
-                                {questionData?.authorLink ? (
-                                    <a
-                                    className="h-6 text-ellipsis text-darkPurple hover:text-purple font-bold"
-                                    href={questionData.authorLink}
-                                    target="_blank"
-                                    rel="noreferrer"
-                                    >
-                                        {questionData.author}
-                                    </a>
-                                ) : (
-                                    <div className="h-6 text-ellipsis text-black font-bold">
-                                        {questionData?.author}
-                                    </div>
-                                )}
-
-                                <div className="flex flex-col items-center justify-center w-full">
-                                    <Title>Current Question</Title>
-                                    {questionData?.img ? 
-                                        <GameImage
-                                            image={questionData?.img}
-                                            imageLoading={imageLoading}
-                                            onLoad={() => {
-                                                setImageLoading(false);
-                                            }}
-                                        />
-                                        :
-                                        <div>No Image Found</div>
-                                    }
-                                </div>
-                            </>}
-                    </div>) : 
+                        <div className="flex flex-col items-center justify-center h-screen">
+                        <Title>{gameData?.gameName}</Title>
+                        <MainButton onClick={refreshData}>Refresh</MainButton>
+                        {countdown > 0 ? (
+                          <div className="text-black font-bold text-[500px]">{countdown}</div>
+                        ) : (
+                          <div className="flex flex-col items-center justify-center w-full">
+                            {questionData?.authorLink ? (
+                              <div className="text-black">Author: <a
+                                className="h-6 text-ellipsis text-darkPurple hover:text-purple font-bold"
+                                href={questionData.authorLink}
+                                target="_blank"
+                                rel="noreferrer"
+                              >
+                                {questionData.author}
+                              </a></div>
+                            ) : (
+                              <div className="h-6 text-ellipsis text-black font-bold">
+                                {questionData?.author}
+                              </div>
+                            )}
+                      
+                            <div className="flex flex-col items-center justify-center w-full">
+                              <Title>Current Question</Title>
+                              {questionData?.img ? (
+                                <GameImage
+                                  image={questionData?.img}
+                                  imageLoading={imageLoading}
+                                  onLoad={() => {
+                                    setImageLoading(false);
+                                  }}
+                                />
+                              ) : (
+                                <div>No Image Found</div>
+                              )}
+                            </div>
+                          </div>
+                        )}
+                      </div>) : 
                     <Title>Game Has Not Started Yet</Title>
                 )    
             )
