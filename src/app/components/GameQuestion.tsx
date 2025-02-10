@@ -82,11 +82,12 @@ const GameQuestion: React.FC<GameQuestionProps> = ({
 
   
   return (
-    <div
-      className={`flex flex-col h-auto my-auto pb-20 transition-opacity duration-200 ${
-        fade ? "opacity-0" : "opacity-100"
-      }`}
-    >
+<div
+  className={`flex flex-col min-h-screen pb-32 transition-opacity duration-200 ${
+    fade ? "opacity-0" : "opacity-100"
+  }`}
+>
+
       {/* Photographer information & Time Elapsed*/}
       <div className="flex justify-between mx-auto mb-2 w-4/5 ">
         <div className="flex justify-start">
@@ -118,9 +119,9 @@ const GameQuestion: React.FC<GameQuestionProps> = ({
       {/* Image container */}
 
       <div className="overflow-x-auto w-screen flex">
-  <div className="relative h-[500px] md:h-[700px] min-w-[100vw] flex-shrink-0 flex justify-center items-center">
+  <div className="relative h-auto min-w-[100vw] flex-shrink-0 flex justify-center items-center">
   
-        <div className={`w-4/5 h-full ${imageLoading || loading ? "animate-pulse bg-gray" : ""}`}>
+        <div className={`w-4/5 max-h-full h-auto ${imageLoading || loading ? "animate-pulse bg-gray" : ""}`}>
           {!loading ? (
             <GameImage
               image={images[displayIndex].image}
