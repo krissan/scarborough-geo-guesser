@@ -7,14 +7,11 @@ import { sanityClient } from "@/sanity";
 
 const query = groq`*[_type == "answer"]`;
 
-type Data = {
-  answers: Answer[];
-};
-
 export async function GET() {
   try {
-    const data: Data = await sanityClient.fetch(query);
-    return NextResponse.json(data);
+    const data: Answer[] = await sanityClient.fetch(query);
+    const answers = data.map((answer) => {return {id: answer._id, text: answer.text}});
+    return NextResponse.json(answers);
   } catch (error) {
     console.error("An error occurred:", error);
     return NextResponse.json(

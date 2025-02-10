@@ -9,6 +9,8 @@ import LinkButton from "../components/buttons/LinkButton";
 import MainButton from "../components/buttons/MainButton";
 import Title from "../components/Title";
 import { checkAuth } from "../services/auth";
+import { createGame } from "../services/admin";
+import { QuestionInput } from "../services/responseInterfaces";
 
 interface CSVRow {
   author: string;
@@ -18,15 +20,16 @@ interface CSVRow {
   throwOffAnswer2: string;
   throwOffAnswer3: string;
   img: string;
+  text: string;
 }
 
 const CreateGame = () => {
   const router = useRouter();
 
-  const [formData, setFormData] = useState({
+  const [ formData, setFormData] = useState({
     name: "",
-    attendees: "",
-    items: null as CSVRow[] | null,
+    attendees: 0,
+    items: null as QuestionInput[] | null,
   });
 
   const [errors, setErrors] = useState({
@@ -66,6 +69,7 @@ const CreateGame = () => {
     "throwOffAnswer2",
     "throwOffAnswer3",
     "img",
+    "text"
   ];
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -103,11 +107,25 @@ const CreateGame = () => {
             return; // Do not overwrite existing data
           }
   
+          // Add rowNumber to each row
+          const questionInput: QuestionInput[] = parsedData.map((row, index) => ({
+            author: row.author,
+            authorLink: row.authorLink,
+            answer: row.answer,
+            throwOffAnswer1: row.throwOffAnswer1,
+            throwOffAnswer2: row.throwOffAnswer2,
+            throwOffAnswer3: row.throwOffAnswer3,
+            img: row.img,
+            text: row.text,
+            questionOrder: index + 1, // Start question order from 1
+          }));
+
           // If valid, update the state
           setFormData({
             ...formData,
-            items: parsedData,
+            items: questionInput,
           });
+
           setFileName(file.name);
           setErrors({
             ...errors,
@@ -132,7 +150,7 @@ const CreateGame = () => {
   };
   
   
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
   
     let valid = true;
@@ -155,11 +173,16 @@ const CreateGame = () => {
   
     setErrors(newErrors);
   
-    if (valid) {
-      alert(`Submitted Data:
+    if (valid && formData.items) {
+      console.log(`Submitted Data:
         name: ${formData.name}
         attendees: ${formData.attendees}
         items: ${JSON.stringify(formData.items, null, 2)}`);
+      const response = await createGame(formData.name, formData.attendees, formData.items);
+      if (response) {
+        alert("Game created successfully!");
+        router.push("/gamesMenu");
+      }
     }
   };
   

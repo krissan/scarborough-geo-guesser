@@ -1,4 +1,4 @@
-import { GraphQLResponse, HostGameForPlayerResponse, PlayerFinalResultResponse, PlayerQuestionScoreResponse, PlayerResponse,   PlayerScoreResponse, QuestionImageResponse, SetScoreResponse } from "./responseInterfaces";
+import { DailyHighScoreResponse, GraphQLResponse, HostGameForPlayerResponse, PlayerFinalResultResponse, PlayerQuestionScoreResponse, PlayerResponse,   PlayerScoreResponse, QuestionImageResponse, SetScoreResponse } from "./responseInterfaces";
 
 const url = process.env.NEXT_PUBLIC_SERVER_URL + "/graphql" || "http://localhost:4000/graphql";
 
@@ -467,7 +467,7 @@ const getPlayerScores = async (gameId: string) => {
 const getPlayerQuestionScores = async (gameId: string, questionId: string) => {
     const query = `
         query GetPlayerScoresByQuestion {
-            getPlayerScoresByQuestion(questionId: "${questionId}, "gameId: "${gameId}") {
+            getPlayerScoresByQuestion(questionId: "${questionId}", gameId: "${gameId}") {
                 playerId
                 playerName
                 questionId
@@ -499,7 +499,113 @@ const getPlayerQuestionScores = async (gameId: string, questionId: string) => {
     }
 }
 
-export { getPlayer, getPlayers, getPlayerCount, removePlayer, setPlayer, getHostGameForPlayer, getPlayerFinalResult, checkQuestionAnswered, getCurrentQuestionOptions, setScore, getCurrentQuestionImage, checkPlayerExists, getPlayerScores, getPlayerQuestionScores } ;
+const getDailyHighScores = async () => {
+    const query = `
+        query GetDailyHighScores {
+            getDailyHighScores {
+                playerName
+                score
+            }
+        }
+    `;
+
+    try {
+        const response = await fetch(url, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ query }),
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const result: GraphQLResponse<{ getDailyHighScore: DailyHighScoreResponse[] }> = await response.json();
+        if (!result.data?.getDailyHighScore) {
+            console.log("No daily high score found");
+        }
+        const scoreResult = result.data?.getDailyHighScore.map((score) => {
+            const playerNumbers = score.playerName.split(" ");
+            const playerName = verbs[parseInt(playerNumbers[0])] + scarborough[parseInt(playerNumbers[1])] + peopleNouns[parseInt(playerNumbers[2])];
+            return {playerName: playerName, score: score.score}
+        });
+
+        return scoreResult;
+    } catch (err) {
+        console.error("Fetch Error:", err);
+    }
+}
+
+const addDailyHighScore = async (nameNumberOne:number, nameNumberTwo:number, nameNumberThree:number, score:number) => {
+    const query = `
+        mutation AddDailyHighScore {
+            addDailyHighScore(nameNumberOne: "${nameNumberOne}", nameNumberTwo: "${nameNumberTwo}", nameNumberThree: "${nameNumberThree}", score: "${score}") {
+                playerName
+                score
+            }
+        }
+    `;
+
+    try {
+        const response = await fetch(url, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ query }),
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const result: GraphQLResponse<{ addDailyHighScore: DailyHighScoreResponse[] }> = await response.json();
+        if (!result.data?.addDailyHighScore) {
+            console.log("Daily high score not added");
+        }
+        const scoreResult = result.data?.addDailyHighScore.map((score) => {
+            const playerNumbers = score.playerName.split(" ");
+            const playerName = verbs[parseInt(playerNumbers[0])] + scarborough[parseInt(playerNumbers[1])] + peopleNouns[parseInt(playerNumbers[2])];
+            return {playerName: playerName, score: score.score}
+        });
+
+        return scoreResult;
+    } catch (err) {
+        console.error("Fetch Error:", err);
+    }
+}
+
+const verbs = [
+    "Playing", "Jumping", "Running", "Laughing", "Sharing",  
+    "Learning", "Singing", "Dancing", "Smiling", "Helping",  
+    "Growing", "Dreaming", "Reading", "Swimming", "Cheering"
+];
+  
+
+const scarborough = [
+    "Agincourt", "Malvern", "Woburn", "Guildwood", "HighlandCreek",  
+    "Westhill", "Rouge", "Morningside", "PortUnion", "Cliffcrest",  
+    "Birchcliff", "Bendale", "LAmoreaux", "Dorset", "Steeles",  
+    "Milliken", "Village", "Ionview", "Eglinton", "Tamoshanter",  
+    "Goldenmile", "Oakridge", "Kennedy", "Birchmount", "Cedarbrae",
+    "Scarborough", "Patty", "MuttonRoll", "ensaymada", "Doubles", "STC", "Wexford", "WoodSide", 
+    "VictoriaPark", "Bluffs", "Brimley", "Lawrence", "Kingston", 
+    "Markham", "Ellesmere", "Finch", "Sheppard", "Nugget", "Morningside", 
+    "Meadowvale", "DonMontgomery", "Centennial", "Brimorton", "MeadowWay",
+    "UTSC", "PanAm", "TorontoZoo", "TTC", "KennedyCommons", "GOTrain"];
+  
+
+const peopleNouns = [
+    "Man", "Woman", "Boy", "Girl", "Child", "Father", "Mother",
+    "Brother", "Sister", "Grandfather", "Grandmother", "Uncle",
+    "Aunt", "Cousin", "Friend", "Neighbor", "Teacher", "Student",
+    "Baby", "Parent"
+];
+
+
+export { verbs, scarborough, peopleNouns, getPlayer, getPlayers, getPlayerCount, removePlayer, setPlayer, getHostGameForPlayer, getPlayerFinalResult, checkQuestionAnswered, getCurrentQuestionOptions, setScore, getCurrentQuestionImage, checkPlayerExists, getPlayerScores, getPlayerQuestionScores, getDailyHighScores, addDailyHighScore } ;
 
 function getAuthHeader(): string {
     throw new Error("Function not implemented.");

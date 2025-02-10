@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react";
-import TimeLine from "../components/Timeline";
+import TimeLine from "../components/timeline";
 import CongratulationSection from "./congratulationSection";
 import { fetchPhotos } from "../api/util";
 import GameQuestion, { ImageQuestion } from "../components/GameQuestion";
@@ -98,7 +98,7 @@ const GameSection: React.FC<GameSectionProps> = ({ photos, setPhotos }) => {
       {winState ? (
       /* Display win screen */
       <div className="flex mt-20 justify-center">
-        <CongratulationSection playAgain={resetGame} corrects={corrects} wrongs={wrongs} />
+        <CongratulationSection playAgain={resetGame} corrects={corrects} wrongs={wrongs} totalTime={totalTime} />
       </div>
     ) : (
         /* Display Current Question*/

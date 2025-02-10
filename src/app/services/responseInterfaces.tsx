@@ -66,7 +66,18 @@ interface Question {
     questionOrder: number;
     img?: string;
     text: string;
-    updateDate: string;
+}
+
+interface QuestionInput {
+    author: string;
+    authorLink?: string;
+    answer: string;
+    throwOffAnswer1: string;
+    throwOffAnswer2: string;
+    throwOffAnswer3: string;
+    questionOrder: number;
+    img: string;
+    text: string;
 }
 
 interface PlayerResponse {
@@ -122,7 +133,14 @@ interface PlayerListResponse {
 interface PlayerScoreResponse {
     playerId: string;
     playerName: string;
-    score: number;}
+    score: number;
+}
+
+interface DailyHighScoreResponse {
+    playerName: string;
+    score: number;
+}
+
 
 interface PlayerQuestionScoreResponse {
     playerId: string;
@@ -131,4 +149,4 @@ interface PlayerQuestionScoreResponse {
     score: number;  
 }
 
-export type { GraphQLResponse, LoginResponse, LogoutResponse, ListGamesResponse, CreateGameResponse, Game, HostGame, Question, PlayerResponse, HostGameForPlayerResponse, PlayerFinalResultResponse, SetScoreResponse, QuestionImageResponse, PlayerListResponse, PlayerScoreResponse, PlayerQuestionScoreResponse };
+export type { QuestionInput, GraphQLResponse, LoginResponse, LogoutResponse, ListGamesResponse, CreateGameResponse, Game, HostGame, Question, PlayerResponse, HostGameForPlayerResponse, PlayerFinalResultResponse, SetScoreResponse, QuestionImageResponse, PlayerListResponse, PlayerScoreResponse, PlayerQuestionScoreResponse, DailyHighScoreResponse };
