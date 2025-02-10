@@ -12,7 +12,7 @@ interface Props extends React.PropsWithoutRef<JSX.IntrinsicElements["input"]> {
 const InputFile = forwardRef<HTMLInputElement, Props>(
   ({ label, errormessage, onChange, fileName, ...props }, ref) => {
     return (
-      <InputContainer text={label} id={props.id} errorMessage={errormessage}>
+      <InputContainer text={label} errorMessage={errormessage}>
         <input
           {...props}
           ref={ref}

@@ -13,11 +13,6 @@ const shuffleArray = <T>(array: T[]): T[] => {
   return array;
 };
 
-interface Answer {
-  id: string;
-  text: string;
-}
-
 // get photo questions and construct multiple choice questions
 export const fetchPhotos = async () => {
     try{

@@ -23,8 +23,8 @@ const GameImage: React.FC<GameImageProps> = ({
     setIsImageValid(true); // Reset image validity on change
   }, [image]);
 
-  const handleError = (e) => {
-    console.error(e.target.id);
+  const handleError = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
+    console.error(e.currentTarget.id);
     setIsImageValid(false); // Set image as invalid if error occurs
   };
 

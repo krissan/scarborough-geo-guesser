@@ -12,7 +12,6 @@ const TextInput = forwardRef<HTMLInputElement, Props>(({ className, ...props }, 
   return (
     <InputContainer
       text={props.label}
-      id={props.id}
       errorMessage={props.errormessage}
     >
       <input

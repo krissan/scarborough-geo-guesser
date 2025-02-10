@@ -3,8 +3,8 @@
 import { useState, useEffect } from "react";
 import Answers, { Option } from "./Answers";
 import GameImage from "./GameImage";
-import AnswersSkeleton from "./loading/AnswersSkeleton";
 import ImageHeaderSkeleton from "./loading/ImageHeaderSkeleton";
+import AnswersSkeleton from "./loading/AnswersSkeleton";
 
 export interface ImageQuestion {
   image: string;
