@@ -1,4 +1,4 @@
-import Title from "../components/Title";
+import SubTitle from "../components/SubTitle";
 import { DailyHighScoreResponse } from "../services/responseInterfaces";
 
 interface HighScoresProps {
@@ -10,7 +10,7 @@ interface HighScoresProps {
 const HighScores: React.FC<HighScoresProps> = ({ highScores, loading }) => {
   return (loading ? <div className=""></div> :
     <div className="flex flex-col items-center sm:items-start">
-    <Title>High Scores</Title>
+    <SubTitle>High Scores</SubTitle>
     <div className="flex flex-col items-center sm:items-start">
       {highScores.map((score, index) => (
         <div key={index} className="flex flex-row justify-between w-full">
