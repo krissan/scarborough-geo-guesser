@@ -2,10 +2,10 @@
 
 import { useState, useEffect } from "react";
 import { Option } from "./Answers";
-import GameImage from "./GameImage";
 import AnswersSkeleton from "./loading/AnswersSkeleton";
 import ImageHeaderSkeleton from "./loading/ImageHeaderSkeleton";
 import { Question } from "../services/responseInterfaces";
+import GameImage from "./GameImage";
 
 export interface ImageQuestion {
   image: string;

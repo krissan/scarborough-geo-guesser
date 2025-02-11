@@ -45,6 +45,7 @@ const CongratulationSection: React.FC<CongratulationSectionProps> = ({ corrects,
   const handleScoreSubmit = async () => {
     setLoadingHighScores(true);
     const score = corrects - wrongs;
+    console.log(playerVerb, playerScarborough, playerNoun, score);
     const response = await addDailyHighScore(playerVerb, playerScarborough, playerNoun, score);
     if(response)
     {
