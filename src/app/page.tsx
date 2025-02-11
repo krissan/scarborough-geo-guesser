@@ -64,6 +64,9 @@ export default function Home() {
         <LinkButton link="https://krissan-portfolio-site-krissans-projects.vercel.app/">
           A project by Krissan Veerasingam
         </LinkButton>
+        <LinkButton link="https://akash-portfolio.com/">
+          Assisted by Akash Sivapalan
+        </LinkButton>
         <LinkButton link="https://www.scarboroughspots.com/">
           Inspired by Scarborough Spots
         </LinkButton>
