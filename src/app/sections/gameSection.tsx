@@ -91,7 +91,7 @@ const GameSection: React.FC<GameSectionProps> = ({ photos, setPhotos }) => {
     setTotalTime(0);
   };
 
-  return <div className={`flex flex-col w-full justify-start flex-grow transition-opacity duration-500 ${
+  return <div className={`flex flex-col w-full justify-start flex-grow  overflow-y-auto transition-opacity duration-500 ${
     isFadingIn ? "opacity-100" : "opacity-0"}`}>
         {/* Display game progress */}
         <TimeLine completed={corrects} setCurrentIndex={setCurrentIndex} currentIndex={currentIndex} />
