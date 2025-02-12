@@ -68,6 +68,7 @@ const CongratulationSection: React.FC<CongratulationSectionProps> = ({
           alert("Failed to submit score")
         }
         setLoadingHighScores(false)
+
     }
 
     return (
