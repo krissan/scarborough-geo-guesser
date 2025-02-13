@@ -59,17 +59,19 @@ export const fetchPhotos = async () => {
         while (options.length < 4) {
           const randomIndex = Math.floor(Math.random() * answers.length);
           const randomAnswer = answers[randomIndex];
-  
-          // if answer is not throw off answer or in photo answer, add it to options
+        
+          // Ensure the answer is not the throw-off answer and isn't already in options
           if (randomAnswer.text !== photo.throwOffAnswer && !uniqueOptionsSet.has(randomAnswer.text)) {
-            photo.answer.forEach((answer) => {
-              if (randomAnswer.text !== answer.text) {
-                uniqueOptionsSet.add(randomAnswer.text);
-                options.push({ option: randomAnswer.text, selected: false });
-              }
-            });
+            // Ensure it's not in the correct answers
+            const isCorrectAnswer = photo.answer.some(answer => answer.text === randomAnswer.text);
+        
+            if (!isCorrectAnswer) {
+              uniqueOptionsSet.add(randomAnswer.text);
+              options.push({ option: randomAnswer.text, selected: false });
+            }
           }
         }
+        
     
         // randomize order of multiple choice options
         const shuffledOptions = shuffleArray(options);

@@ -8,7 +8,7 @@ const SubTitle: React.FC<TitleProps> = ({ children, className="" }) => {
   return (
     <div
       className={
-        "text-sm sm:text-xl lg:text-4xl xl:text-6xl font-bold tracking-tighter font-anton mb-10 mx-auto text-black " + className}
+        "text-sm sm:text-xl lg:text-4xl xl:text-6xl font-bold tracking-tighter font-anton mb-4 mx-auto text-black " + className}
     >
       {children}
     </div>

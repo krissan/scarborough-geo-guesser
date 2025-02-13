@@ -13,17 +13,17 @@ export interface ImageQuestion {
   answer: number;
   options: Option[];
   finished: boolean;
-  questionFormat?:string
+  questionFormat?: string;
 }
 
 interface GameQuestionProps {
   images: ImageQuestion[];
   currentIndex: number;
-  increaseCorrects: (index: number, option: number, timeTaken:number) => void;
+  increaseCorrects: (index: number, option: number, timeTaken: number) => void;
   increaseWrongs: (index: number, option: number) => void;
   loading: boolean;
   corrects: number;
-  totalTime:number;
+  totalTime: number;
 }
 
 // Display Image Question with image, image related info and choices for questions
@@ -34,21 +34,23 @@ const GameQuestion: React.FC<GameQuestionProps> = ({
   increaseWrongs,
   loading,
   corrects,
-  totalTime
+  totalTime,
 }) => {
   const [fade, setFade] = useState(false); // triggers fade-in(false) & fade-out(false)
-  const [displayIndex, setDisplayIndex] = useState(currentIndex); // index at which to display image  
+  const [displayIndex, setDisplayIndex] = useState(currentIndex); // index at which to display image
   const [imageLoading, setImageLoading] = useState(true); // tracks whether image has been loaded for display
   const [startTime, setStartTime] = useState(0); // track start time of each question
-  const [displayedTime, setDisplayedTime] = useState((totalTime / 1000).toFixed(2)); // elapsed-time to be displayed
+  const [displayedTime, setDisplayedTime] = useState(
+    (totalTime / 1000).toFixed(2)
+  ); // elapsed-time to be displayed
   const [timing, setTiming] = useState(false); // tracks wether player should be being timed
 
   // Update time being displayed
-  useEffect(() => { 
+  useEffect(() => {
     const interval = setInterval(() => {
-      if(timing){
+      if (timing) {
         const timeTaken = totalTime + (Date.now() - startTime) / 1000;
-        setDisplayedTime((timeTaken).toFixed(2));
+        setDisplayedTime(timeTaken.toFixed(2));
       }
     }, 500);
 
@@ -80,14 +82,12 @@ const GameQuestion: React.FC<GameQuestionProps> = ({
     }
   }, [imageLoading]);
 
-  
   return (
-<div
-  className={`flex flex-col min-h-screen pb-32 transition-opacity duration-200 ${
-    fade ? "opacity-0" : "opacity-100"
-  }`}
->
-
+    <div
+      className={`flex flex-col min-h-screen pb-32 transition-opacity duration-200 ${
+        fade ? "opacity-0" : "opacity-100"
+      }`}
+    >
       {/* Photographer information & Time Elapsed*/}
       <div className="flex justify-between mx-auto mb-2 w-4/5 ">
         <div className="flex justify-start">
@@ -110,33 +110,37 @@ const GameQuestion: React.FC<GameQuestionProps> = ({
               )}
             </>
           ) : (
-            <ImageHeaderSkeleton/>
+            <ImageHeaderSkeleton />
           )}
         </div>
-        <div className="flex justify-start   text-black"><div className="text-darkGray pr-1">Total Time: </div>{displayedTime}</div>
+        <div className="flex justify-start   text-black">
+          <div className="text-darkGray pr-1">Total Time: </div>
+          {displayedTime}
+        </div>
       </div>
 
       {/* Image container */}
 
-      <div className="overflow-x-auto w-screen flex">
-  <div className="relative h-auto min-w-[100vw] flex-shrink-0 flex justify-center items-center">
-  
-        <div className={`w-4/5 max-h-full h-auto ${imageLoading || loading ? "animate-pulse bg-gray" : ""}`}>
-          {!loading ? (
-            <GameImage
-              image={images[displayIndex].image}
-              imageLoading={imageLoading}
-              onLoad={() => {
-                setImageLoading(false);
-                setStartTime(Date.now());
-                setTiming(true);
-              }}
-            />
-          ) : (
-            <></>
-          )}
+      <div className="overflow-x-auto w-screen flex flex-row justify-start">
+        <div className="h-auto flex justify-center">
+          <div
+            className={`w-4/5 max-h-full h-auto ${imageLoading || loading ? "animate-pulse bg-gray" : ""}`}
+          >
+            {!loading ? (
+              <GameImage
+                image={images[displayIndex].image}
+                imageLoading={imageLoading}
+                onLoad={() => {
+                  setImageLoading(false);
+                  setStartTime(Date.now());
+                  setTiming(true);
+                }}
+              />
+            ) : (
+              <></>
+            )}
+          </div>
         </div>
-      </div>
       </div>
 
       {/* Choice section */}
@@ -153,7 +157,7 @@ const GameQuestion: React.FC<GameQuestionProps> = ({
           imageIndex={displayIndex}
         />
       ) : (
-        <AnswersSkeleton/>
+        <AnswersSkeleton />
       )}
     </div>
   );
