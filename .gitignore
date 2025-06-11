@@ -40,3 +40,6 @@ next-env.d.ts
 
 answers.json
 photos.json
+
+.vscode*
+.gitignore*

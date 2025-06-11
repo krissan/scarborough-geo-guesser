@@ -3,64 +3,48 @@
 import { useState, useEffect } from "react";
 import { fetchPhotos } from "./api/util";
 import LinkButton from "./components/buttons/LinkButton";
-import GameSection from "./sections/GameSection";
-import LandingSection from "./sections/LandingSection";
 import { ImageQuestion } from "./components/GameQuestion";
-import { getDailyHighScores } from "./services/player";
-import { DailyHighScoreResponse } from "./services/responseInterfaces";
+import LandingSection from "./sections/landingSection";
+import GameSection from "./sections/gameSection";
 
 export default function Home() {
   const [photos, setPhotos] = useState<ImageQuestion[]>([]); // Store photos from API
   const [isGameStarted, setIsGameStarted] = useState(false); // Control which section to show
   const [isFadingOut, setIsFadingOut] = useState(false); // Control the fade-out animation
-  const [highScores, setHighScores] = useState<DailyHighScoreResponse[]>([]);
-  const [loadingHighScores, setLoadingHighScores] = useState(true);
 
   useEffect(() => {
-    // Function to fetch all highscores
-    const fetchHighScores = async () => {
-      setLoadingHighScores(true);
-      const data = await getDailyHighScores();
-      if(data){
-        setHighScores(data);
-      }
-      setLoadingHighScores(false);
-    }
-
     // Fetch photos when the component mounts
     const loadPhotos = async () => {
       const fetchedPhotos = await fetchPhotos();
       setPhotos(fetchedPhotos);
     };
     loadPhotos();
-    fetchHighScores();
   }, []);
 
   const startGame = () => {
     setIsFadingOut(true);
-  
+
     setTimeout(() => {
       setIsGameStarted(true);
     }, 500);
   };
 
   return (
-
-<div className="flex flex-col items-center justify-center text-black min-h-screen w-screen overflow-y-auto">
-  <main className="flex flex-col justify-center mx-auto flex-grow pb-20">
-    {!isGameStarted ? (
-      <div
-        className={`transition-opacity duration-500 ${
-          isFadingOut ? "opacity-0" : "opacity-100"
-        }`}
-      >
-        <LandingSection startGame={startGame} highScores={highScores} loadingHighScores={loadingHighScores}/>
-      </div>
-    ) : (
-      <GameSection photos={photos} setPhotos={setPhotos} />
-    )}
-  </main>
-      <div className="flex flex-row justify-around w-full h-auto py-2">
+    <div className="flex flex-col items-center justify-center text-black min-h-screen w-screen">
+      <main className="flex flex-col justify-center mx-auto flex-grow overflow-y-auto">
+        {!isGameStarted ? (
+          <div
+            className={`transition-opacity duration-500 ${
+              isFadingOut ? "opacity-0" : "opacity-100"
+            }`}
+          >
+            <LandingSection startGame={startGame} />
+          </div>
+        ) : (
+          <GameSection photos={photos} setPhotos={setPhotos} />
+        )}
+      </main>
+      <footer className="flex flex-row justify-around w-full h-16 py-2 bg-white">
         <LinkButton link="https://krissan-portfolio-site-krissans-projects.vercel.app/">
           A project by Krissan Veerasingam
         </LinkButton>
@@ -70,7 +54,7 @@ export default function Home() {
         <LinkButton link="https://www.scarboroughspots.com/">
           Inspired by Scarborough Spots
         </LinkButton>
-      </div>
+      </footer>
     </div>
   );
 }

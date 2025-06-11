@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import { useEffect, useState } from "react";
 import TimeLine from "../components/Timeline";
@@ -19,8 +19,8 @@ const GameSection: React.FC<GameSectionProps> = ({ photos, setPhotos }) => {
   const [wrongs, setWrongs] = useState(0);
   const [images, setImages] = useState<ImageQuestion[]>([]);
   const [isFadingIn, setIsFadingIn] = useState(false);
-  const [winState, setWinState] = useState(false)
-  const [totalTime, setTotalTime] = useState(0)
+  const [winState, setWinState] = useState(false);
+  const [totalTime, setTotalTime] = useState(0);
 
   // When photos are available, populate Images and fade in the game
   useEffect(() => {
@@ -36,8 +36,8 @@ const GameSection: React.FC<GameSectionProps> = ({ photos, setPhotos }) => {
   }, [photos]);
 
   // When all questions are answered correct fade out and set win state to true
-  useEffect(()=>{
-    if(corrects >= 8){
+  useEffect(() => {
+    if (corrects >= 8) {
       setIsFadingIn(false);
 
       setTimeout(() => {
@@ -45,7 +45,7 @@ const GameSection: React.FC<GameSectionProps> = ({ photos, setPhotos }) => {
         setIsFadingIn(true); // Start fading in the game section
       }, 500);
     }
-  },[corrects])
+  }, [corrects]);
 
   // Update options in multiple choice as selected
   const updateImageOption = (imageIndex: number, optionIndex: number) => {
@@ -65,10 +65,14 @@ const GameSection: React.FC<GameSectionProps> = ({ photos, setPhotos }) => {
   };
 
   // When question is answered correctly
-  const increaseCorrects = (index: number, option: number, timeTaken: number) => {
+  const increaseCorrects = (
+    index: number,
+    option: number,
+    timeTaken: number
+  ) => {
     setCorrects(corrects + 1);
-    setCurrentIndex(corrects+1);
-    setTotalTime(totalTime+timeTaken);
+    setCurrentIndex(corrects + 1);
+    setTotalTime(totalTime + timeTaken);
     updateImageOption(index, option);
   };
 
@@ -79,7 +83,7 @@ const GameSection: React.FC<GameSectionProps> = ({ photos, setPhotos }) => {
   };
 
   // Reset game state when play again is selected
-  const resetGame = async() => {
+  const resetGame = async () => {
     setCorrects(0);
     setWrongs(0);
     setCurrentIndex(0);
@@ -91,16 +95,29 @@ const GameSection: React.FC<GameSectionProps> = ({ photos, setPhotos }) => {
     setTotalTime(0);
   };
 
-  return <div className={`flex flex-col w-full justify-start flex-grow  overflow-y-auto transition-opacity duration-500 ${
-    isFadingIn ? "opacity-100" : "opacity-0"}`}>
-        {/* Display game progress */}
-        <TimeLine completed={corrects} setCurrentIndex={setCurrentIndex} currentIndex={currentIndex} />
+  return (
+    <div
+      className={`flex flex-col w-full justify-start transition-opacity duration-500 ${
+        isFadingIn ? "opacity-100" : "opacity-0"
+      }`}
+    >
+      {/* Display game progress */}
+      <TimeLine
+        completed={corrects}
+        setCurrentIndex={setCurrentIndex}
+        currentIndex={currentIndex}
+      />
       {winState ? (
-      /* Display win screen */
-      <div className="flex mt-20 justify-center">
-        <CongratulationSection playAgain={resetGame} corrects={corrects} wrongs={wrongs} totalTime={totalTime} />
-      </div>
-    ) : (
+        /* Display win screen */
+        <div className="flex mt-20 justify-center">
+          <CongratulationSection
+            playAgain={resetGame}
+            corrects={corrects}
+            wrongs={wrongs}
+            totalTime={totalTime}
+          />
+        </div>
+      ) : (
         /* Display Current Question*/
         <GameQuestion
           loading={loading}
@@ -111,8 +128,9 @@ const GameSection: React.FC<GameSectionProps> = ({ photos, setPhotos }) => {
           corrects={corrects}
           totalTime={totalTime}
         />
-    )}
-  </div>
+      )}
+    </div>
+  );
 };
 
 export default GameSection;

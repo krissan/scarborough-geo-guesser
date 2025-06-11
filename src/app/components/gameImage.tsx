@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import Image from "next/image";
 import { useEffect, useState } from "react";
@@ -12,7 +12,7 @@ interface GameImageProps {
 const GameImage: React.FC<GameImageProps> = ({
   imageLoading,
   image,
-  onLoad
+  onLoad,
 }) => {
   const [isBlur, setIsBlur] = useState(true); // Track pixelation state
   const [isImageValid, setIsImageValid] = useState(true); // Track if the image is valid
@@ -36,7 +36,7 @@ const GameImage: React.FC<GameImageProps> = ({
     <Image
       src={image}
       alt="current"
-      className={`max-w-full max-h-[60vh] object-contain ${isBlur ? "blur" : "remove-blur"} ${imageLoading ? "opacity-0" : "opacity-100"}`}
+      className={`max-h-[40vh] object-contain ${isBlur ? "blur" : "remove-blur"} ${imageLoading ? "opacity-0" : "opacity-100"}`}
       width={1800}
       height={1800}
       onLoad={() => {
