@@ -4,8 +4,8 @@ import { useState, useEffect } from "react";
 import { fetchPhotos } from "./api/util";
 import LinkButton from "./components/buttons/LinkButton";
 import { ImageQuestion } from "./components/GameQuestion";
-import LandingSection from "./sections/landingSection";
-import GameSection from "./sections/gameSection";
+import LandingSection from "./sections/LandingSection";
+import GameSection from "./sections/GameSection";
 
 export default function Home() {
   const [photos, setPhotos] = useState<ImageQuestion[]>([]); // Store photos from API

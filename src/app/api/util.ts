@@ -28,12 +28,9 @@ export const fetchPhotos = async () => {
 
     const responseText = await response.text();
     const photos: Photo[] = JSON.parse(responseText);
-    console.log(photos);
 
     // grab multiple choice options
     const answers: Answer[] = await fetchAnswers();
-
-    console.log(answers);
 
     if (!answers || answers.length === 0) {
       throw new Error(
@@ -43,41 +40,41 @@ export const fetchPhotos = async () => {
 
     // generate multiple choice questions from photos and answers
     const imageQuestions: ImageQuestion[] = photos.map((photo) => {
-      const options: Option[] = [];
+      const options = new Set<Option>();
       const uniqueOptionsSet = new Set<string>(); // Use a set to avoid duplicates
 
       // grab random answer from photo and add it to unique option set
       const randomAnsIndex = Math.floor(Math.random() * answers.length);
       const randomAns = answers[randomAnsIndex].text;
       uniqueOptionsSet.add(randomAns);
-      options.push({ option: randomAns, selected: false });
+      options.add({ option: randomAns, selected: false });
 
       if (photo.throwOffAnswer) {
         uniqueOptionsSet.add(photo.throwOffAnswer);
-        options.push({ option: photo.throwOffAnswer, selected: false });
+        options.add({ option: photo.throwOffAnswer, selected: false });
       }
 
       // add answers randomly until there are 4 multiple choice options
-      while (options.length < 4) {
+      while (options.size < 4) {
         const randomIndex = Math.floor(Math.random() * answers.length);
-        const randomAnswer = answers[randomIndex];
+        const randomAnswer = answers[randomIndex].text;
 
-        // if answer is not throw off answer or in photo answer, add it to options
+        // ensure it's not already added, not the throw off answer, and not any of the correct answers
+        const isCorrectAnswer = photo.answer.some(
+          (a) => a.text === randomAnswer
+        );
         if (
-          randomAnswer.text !== photo.throwOffAnswer &&
-          !uniqueOptionsSet.has(randomAnswer.text)
+          !uniqueOptionsSet.has(randomAnswer) &&
+          randomAnswer !== photo.throwOffAnswer &&
+          !isCorrectAnswer
         ) {
-          photo.answer.forEach((answer) => {
-            if (randomAnswer.text !== answer.text) {
-              uniqueOptionsSet.add(randomAnswer.text);
-              options.push({ option: randomAnswer.text, selected: false });
-            }
-          });
+          uniqueOptionsSet.add(randomAnswer);
+          options.add({ option: randomAnswer, selected: false });
         }
       }
 
       // randomize order of multiple choice options
-      const shuffledOptions = shuffleArray(options);
+      const shuffledOptions = shuffleArray(options.values().toArray());
       const answerIndex = shuffledOptions.findIndex(
         (opt) => opt.option === randomAns
       );
